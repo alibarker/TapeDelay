@@ -1,0 +1,22 @@
+dependencies: \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUDispatch.cpp \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUBase.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/../../../juce_core/native/juce_mac_ClangBugWorkaround.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUScopeElement.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/ComponentBase.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CADebugMacros.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CADebugPrintf.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAXException.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUBuffer.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAStreamBasicDescription.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAAutoDisposer.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUInputElement.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUOutputElement.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAMath.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAThreadSafeList.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAAtomicStack.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAVectorUnit.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAVectorUnitTypes.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/CAMutex.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUPlugInDispatch.h \
+  /Users/alibarker89/SDKs/JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUDispatch.h

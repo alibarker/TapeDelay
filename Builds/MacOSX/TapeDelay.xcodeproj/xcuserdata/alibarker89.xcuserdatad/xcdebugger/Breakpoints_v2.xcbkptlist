@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/PluginProcessor.cpp"
+            timestampString = "479921944.723907"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
+            landmarkName = "TapeDelayAudioProcessor::createEditor()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/PluginProcessor.cpp"
+            timestampString = "479921944.723907"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/PluginProcessor.cpp"
+            timestampString = "479921944.723907"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../../../SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+            timestampString = "479917773.825099"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "85"
+            endingLineNumber = "85">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "Plugin Host"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.00315"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "compressor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.676514"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "ModDelay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.715107"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "72">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "Multiband_compressor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.727724"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "parametriceq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.73863"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "pingpongdelay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.751199"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "TapeDelay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919753.993036"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "Test"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919754.010092"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "juce::LagrangeInterpolator::process(double, float const*, float*, int)"
+                  moduleName = "vibrato"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alibarker89/SDKs/JUCE/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp"
+                  timestampString = "479919754.038952"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "65">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/VariableDelayLine.cpp"
+            timestampString = "479932144.164154"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "VariableDelayLine::writeSamples(AudioSampleBuffer &amp;buffer)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/VariableDelayLine.cpp"
+            timestampString = "479932144.164154"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "VariableDelayLine::writeSamples(AudioSampleBuffer &amp;buffer)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/VariableDelayLine.cpp"
+            timestampString = "479932144.164154"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "VariableDelayLine::writeSamples(AudioSampleBuffer &amp;buffer)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/VariableDelayLine.cpp"
+            timestampString = "479932144.164154"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "VariableDelayLine::readSamples(int readHeadIndex, AudioSampleBuffer &amp;buffer)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
