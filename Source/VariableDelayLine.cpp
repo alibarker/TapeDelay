@@ -79,12 +79,6 @@ void VariableDelayLine::writeSamples(AudioSampleBuffer &buffer)
 
         numUnusedSamples = numInputSamples - samplesUsed;
         
-        if (numUnusedSamples < 0)
-        {
-            DBG("STOP In:\t" << numInputSamples << "Out:\t" << numOutputSamples << "Used\t" << samplesUsed);
-            numUnusedSamples = numUnusedSamples;
-            
-        }\
         // If unused input samples copy them to buffer to reuse on next block
         if (numUnusedSamples > 0)
         {

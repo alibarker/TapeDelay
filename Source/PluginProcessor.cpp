@@ -153,16 +153,16 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 
         tapeInput.addFrom(0, 0, tapeOutput, 0, 0, numSamples, feedback);
     
-//    for (int n = 0; n < numSamples; n++)
-//    {
-//    
-//        dist.setGain(1);
-//    
-//        float input = tapeInput.getSample(0, n);
-//        float output = highpass[0]->processSingleSampleRaw(dist.processSample(input, distTypeTube));
-//        
-//        tapeInput.setSample(0, n, output);
-//    }
+    for (int n = 0; n < numSamples; n++)
+    {
+    
+        dist.setGain(1);
+    
+        float input = tapeInput.getSample(0, n);
+        float output = highpass[0]->processSingleSampleRaw(dist.processSample(input, distTypeTube));
+        
+        tapeInput.setSample(0, n, output);
+    }
     
     tape->writeSamples(tapeInput);
         
