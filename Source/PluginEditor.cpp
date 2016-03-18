@@ -54,6 +54,20 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     toggleButton->setButtonText (TRANS("Emphasis on/off"));
     toggleButton->addListener (this);
 
+    addAndMakeVisible (sliderSpeed = new Slider ("new slider"));
+    sliderSpeed->setRange (0.1, 10, 0);
+    sliderSpeed->setSliderStyle (Slider::LinearHorizontal);
+    sliderSpeed->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    sliderSpeed->addListener (this);
+
+    addAndMakeVisible (label2 = new Label ("new label",
+                                           TRANS("Speed")));
+    label2->setFont (Font (15.00f, Font::plain));
+    label2->setJustificationType (Justification::centredLeft);
+    label2->setEditable (false, false, false);
+    label2->setColour (TextEditor::textColourId, Colours::black);
+    label2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -73,6 +87,8 @@ TapeDelayAudioProcessorEditor::~TapeDelayAudioProcessorEditor()
     gain = nullptr;
     label = nullptr;
     toggleButton = nullptr;
+    sliderSpeed = nullptr;
+    label2 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -99,6 +115,8 @@ void TapeDelayAudioProcessorEditor::resized()
     gain->setBounds (32, 24, 150, 24);
     label->setBounds (192, 24, 150, 24);
     toggleButton->setBounds (32, 64, 150, 24);
+    sliderSpeed->setBounds (56, 144, 198, 24);
+    label2->setBounds (256, 144, 150, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -113,6 +131,12 @@ void TapeDelayAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMov
         //[UserSliderCode_gain] -- add your slider handling code here..
         processor.setParameter(0, gain->getValue());
         //[/UserSliderCode_gain]
+    }
+    else if (sliderThatWasMoved == sliderSpeed)
+    {
+        //[UserSliderCode_sliderSpeed] -- add your slider handling code here..
+        processor.setParameter(kSpeed, sliderSpeed->getValue());
+        //[/UserSliderCode_sliderSpeed]
     }
 
     //[UsersliderValueChanged_Post]
@@ -167,6 +191,15 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="new toggle button" id="978d986d74cd651a" memberName="toggleButton"
                 virtualName="" explicitFocusOrder="0" pos="32 64 150 24" buttonText="Emphasis on/off"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <SLIDER name="new slider" id="efd08dd65e36581b" memberName="sliderSpeed"
+          virtualName="" explicitFocusOrder="0" pos="56 144 198 24" min="0.10000000000000000555"
+          max="10" int="0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <LABEL name="new label" id="d0f6c70f30ab4f86" memberName="label2" virtualName=""
+         explicitFocusOrder="0" pos="256 144 150 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Speed" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

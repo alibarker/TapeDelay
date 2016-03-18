@@ -12,6 +12,10 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.1.0">
   <MAINGROUP id="PuKJtX" name="TapeDelay">
     <GROUP id="{C7738E4C-DF95-CECD-D20E-6774C79EF926}" name="Source">
+      <FILE id="jOnYmy" name="MultiDistortion.cpp" compile="1" resource="0"
+            file="Source/MultiDistortion.cpp"/>
+      <FILE id="u81lvQ" name="MultiDistortion.h" compile="0" resource="0"
+            file="Source/MultiDistortion.h"/>
       <FILE id="YIlo2n" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="K479Br" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
@@ -19,10 +23,6 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="gnxJyn" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="GuZC6J" name="TubeDistortion.cpp" compile="1" resource="0"
-            file="Source/TubeDistortion.cpp"/>
-      <FILE id="NVag4J" name="TubeDistortion.h" compile="0" resource="0"
-            file="Source/TubeDistortion.h"/>
       <FILE id="UbXj5l" name="VariableDelayLine.cpp" compile="1" resource="0"
             file="Source/VariableDelayLine.cpp"/>
       <FILE id="ywCqVg" name="VariableDelayLine.h" compile="0" resource="0"

@@ -16,6 +16,14 @@
 #include "VariableDelayLine.h"
 
 
+enum Parameters {
+    kGain = 0,
+    kEmphasisOn,
+    kFeedback,
+    kSpeed,
+    kNumParameters
+};
+
 //==============================================================================
 /**
 */

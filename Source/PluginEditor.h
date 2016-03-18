@@ -62,6 +62,8 @@ private:
     ScopedPointer<Slider> gain;
     ScopedPointer<Label> label;
     ScopedPointer<ToggleButton> toggleButton;
+    ScopedPointer<Slider> sliderSpeed;
+    ScopedPointer<Label> label2;
 
 
     //==============================================================================
