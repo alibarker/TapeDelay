@@ -15,12 +15,15 @@ VariableDelayLine::VariableDelayLine(int numReadHeads)
     
     numReadHeads = 1;
     
-    currentSpeed = 1.1;
+    currentSpeed = 1/M_PI;
     
     writePointer = 0;
     
     delayLine.setSize(1, DELAY_LINE_SIZE);
     delayLine.clear();
+    
+    unusedSamples.setSize(0, 0);
+
     
     writeHead = new LagrangeInterpolator();
     writeInputBuffer.setSize( 1, DELAY_LINE_SIZE);
@@ -32,17 +35,37 @@ VariableDelayLine::VariableDelayLine(int numReadHeads)
     }
 }
 
-void VariableDelayLine::writeSamples(AudioSampleBuffer &buffer)
+int VariableDelayLine::writeSamples(AudioSampleBuffer &buffer)
 {
-    
-    int numInputSamples = buffer.getNumSamples();
+    int numUnusedSamples = unusedSamples.getNumSamples();
+    int numInputSamples = buffer.getNumSamples() + numUnusedSamples;
     int numOutputSamples = floor(numInputSamples/currentSpeed);
+    
+    AudioSampleBuffer bufferToCopyFrom;
+    bufferToCopyFrom.setSize(1, numInputSamples);
+
+    if (numUnusedSamples > 0) {
+        bufferToCopyFrom.copyFrom(0, 0, unusedSamples, 0, 0, numUnusedSamples);
+        bufferToCopyFrom.copyFrom(0, numUnusedSamples, buffer, 0, 0, buffer.getNumSamples());
+        unusedSamples.setSize(0, 0);
+    } else
+    {
+        bufferToCopyFrom.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
+    }
+    
+//    DBG("Unused Samples:\t" << numUnusedSamples << "Input Samples:\t" << numInputSamples << "Output Samples:\t" << numOutputSamples);
     
     AudioSampleBuffer bufferToWriteTo;
     bufferToWriteTo.setSize(1, numOutputSamples);
     
-    int samplesUsed = writeHead->process(currentSpeed, buffer.getReadPointer(0), bufferToWriteTo.getWritePointer(0, 0), numOutputSamples);
+    int samplesUsed = writeHead->process(currentSpeed, bufferToCopyFrom.getReadPointer(0), bufferToWriteTo.getWritePointer(0, 0), numOutputSamples);
 
+    if (numInputSamples - samplesUsed > 0)
+    {
+        unusedSamples.setSize(1, numInputSamples - samplesUsed);
+        unusedSamples.copyFrom(0, 0, buffer, 0, samplesUsed, numInputSamples - samplesUsed );
+    }
+    
     for (int i = 0; i < numOutputSamples; i++)
     {
         delayLine.setSample(0, writePointer, bufferToWriteTo.getSample(0, i));
@@ -53,6 +76,7 @@ void VariableDelayLine::writeSamples(AudioSampleBuffer &buffer)
         }
     }
     
+    return numInputSamples - samplesUsed;
     
 }
 

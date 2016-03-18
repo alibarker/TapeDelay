@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/PluginProcessor.cpp"
-            timestampString = "479921944.723907"
+            timestampString = "479990584.697581"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "180"
@@ -209,11 +209,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/VariableDelayLine.cpp"
-            timestampString = "479932144.164154"
+            timestampString = "479990951.661214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
             landmarkName = "VariableDelayLine::writeSamples(AudioSampleBuffer &amp;buffer)"
             landmarkType = "5">
          </BreakpointContent>
@@ -225,11 +225,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/VariableDelayLine.cpp"
-            timestampString = "479932144.164154"
+            timestampString = "479990837.642067"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
             landmarkName = "VariableDelayLine::writeSamples(AudioSampleBuffer &amp;buffer)"
             landmarkType = "5">
          </BreakpointContent>
@@ -241,11 +241,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/VariableDelayLine.cpp"
-            timestampString = "479932144.164154"
+            timestampString = "479990837.642067"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
             landmarkName = "VariableDelayLine::writeSamples(AudioSampleBuffer &amp;buffer)"
             landmarkType = "5">
          </BreakpointContent>
@@ -257,11 +257,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/VariableDelayLine.cpp"
-            timestampString = "479932144.164154"
+            timestampString = "479990951.661214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
             landmarkName = "VariableDelayLine::readSamples(int readHeadIndex, AudioSampleBuffer &amp;buffer)"
             landmarkType = "5">
          </BreakpointContent>

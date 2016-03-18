@@ -467,6 +467,6 @@ dependencies: \
   ../../JuceLibraryCode/modules/juce_video/../../../../../../../../../SDKs/JUCE/modules/juce_video/playback/juce_DirectShowComponent.h \
   ../../JuceLibraryCode/modules/juce_video/../../../../../../../../../SDKs/JUCE/modules/juce_video/playback/juce_QuickTimeMovieComponent.h \
   ../../JuceLibraryCode/modules/juce_video/../../../../../../../../../SDKs/JUCE/modules/juce_video/capture/juce_CameraDevice.h \
-  /Users/alibarker89/Dropbox/QMUL/Semester\ 2/DAFX/Assignment\ 3/TapeDelay/Source/TubeDistortion.h \
+  /Users/alibarker89/Dropbox/QMUL/Semester\ 2/DAFX/Assignment\ 3/TapeDelay/Source/MultiDistortion.h \
   /Users/alibarker89/Dropbox/QMUL/Semester\ 2/DAFX/Assignment\ 3/TapeDelay/Source/VariableDelayLine.h \
   /Users/alibarker89/Dropbox/QMUL/Semester\ 2/DAFX/Assignment\ 3/TapeDelay/Source/PluginEditor.h

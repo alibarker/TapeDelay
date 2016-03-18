@@ -21,7 +21,7 @@ public:
     VariableDelayLine(int numReadHeads);
     ~VariableDelayLine() {}
     
-    void writeSamples(AudioSampleBuffer &buffer);
+    int writeSamples(AudioSampleBuffer &buffer);
     void readSamples(int readHeadIndex, AudioSampleBuffer &buffer);
     
     void reset();
@@ -42,6 +42,8 @@ private:
     AudioSampleBuffer writeInputBuffer;
     int writeInputBufferWritePointer = 0;
     int writeInputBufferReadPointer = 0;
+    
+    AudioSampleBuffer unusedSamples;
 
     int readPointers[1];
     

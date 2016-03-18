@@ -12,7 +12,7 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "TubeDistortion.h"
+#include "MultiDistortion.h"
 #include "VariableDelayLine.h"
 
 
@@ -59,7 +59,7 @@ private:
     //==============================================================================
     
     OwnedArray<IIRFilter> highpass;
-    TubeDistortion dist;
+    MultiDistortion dist;
     
     ScopedPointer<VariableDelayLine> tape;
     
