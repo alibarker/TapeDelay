@@ -26,6 +26,46 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+
+class TapeDelayAudioProcessorEditor::ParameterSlider   : public Slider,
+                                                                private Timer
+{
+public:
+    ParameterSlider (AudioProcessorParameter& p)
+    : Slider (p.getName (256)), param (p)
+    {
+        setRange (0.0, 1.0, 0.0);
+        startTimerHz (30);
+        updateSliderPos();
+    }
+
+    void valueChanged() override
+    {
+        param.setValueNotifyingHost ((float) Slider::getValue());
+    }
+
+    void timerCallback() override       { updateSliderPos(); }
+
+    void startedDragging() override     { param.beginChangeGesture(); }
+    void stoppedDragging() override     { param.endChangeGesture();   }
+
+    double getValueFromText (const String& text) override   { return param.getValueForText (text); }
+    String getTextFromValue (double value) override         { return param.getText ((float) value, 1024); }
+
+    void updateSliderPos()
+    {
+        const float newValue = param.getValue();
+
+        if (newValue != (float) Slider::getValue() && ! isMouseButtonDown())
+            Slider::setValue (newValue);
+    }
+
+    AudioProcessorParameter& param;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterSlider)
+};
+
+
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -34,13 +74,6 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
-
-    addAndMakeVisible (gain = new Slider ("new slider"));
-    gain->setRange (0, 1, 0);
-    gain->setSliderStyle (Slider::LinearHorizontal);
-    gain->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
-    gain->addListener (this);
-    gain->setSkewFactor (0.1);
 
     addAndMakeVisible (label = new Label ("new label",
                                           TRANS("Gain")));
@@ -54,12 +87,6 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     toggleButton->setButtonText (TRANS("Emphasis on/off"));
     toggleButton->addListener (this);
 
-    addAndMakeVisible (sliderSpeed = new Slider ("new slider"));
-    sliderSpeed->setRange (0.1, 10, 0);
-    sliderSpeed->setSliderStyle (Slider::LinearHorizontal);
-    sliderSpeed->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
-    sliderSpeed->addListener (this);
-
     addAndMakeVisible (label2 = new Label ("new label",
                                            TRANS("Speed")));
     label2->setFont (Font (15.00f, Font::plain));
@@ -67,6 +94,9 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     label2->setEditable (false, false, false);
     label2->setColour (TextEditor::textColourId, Colours::black);
     label2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (sliderSpeed = new ParameterSlider (*processor.getParameters()[kSpeed]));
+    sliderSpeed->setName ("new component");
 
 
     //[UserPreSize]
@@ -84,11 +114,10 @@ TapeDelayAudioProcessorEditor::~TapeDelayAudioProcessorEditor()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    gain = nullptr;
     label = nullptr;
     toggleButton = nullptr;
-    sliderSpeed = nullptr;
     label2 = nullptr;
+    sliderSpeed = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -112,35 +141,12 @@ void TapeDelayAudioProcessorEditor::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    gain->setBounds (32, 24, 150, 24);
     label->setBounds (192, 24, 150, 24);
     toggleButton->setBounds (32, 64, 150, 24);
-    sliderSpeed->setBounds (56, 144, 198, 24);
     label2->setBounds (256, 144, 150, 24);
+    sliderSpeed->setBounds (64, 144, 150, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
-}
-
-void TapeDelayAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
-{
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == gain)
-    {
-        //[UserSliderCode_gain] -- add your slider handling code here..
-        processor.setParameter(0, gain->getValue());
-        //[/UserSliderCode_gain]
-    }
-    else if (sliderThatWasMoved == sliderSpeed)
-    {
-        //[UserSliderCode_sliderSpeed] -- add your slider handling code here..
-        processor.setParameter(kSpeed, sliderSpeed->getValue());
-        //[/UserSliderCode_sliderSpeed]
-    }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
 }
 
 void TapeDelayAudioProcessorEditor::buttonClicked (Button* buttonThatWasClicked)
@@ -179,10 +185,6 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ffffffff"/>
-  <SLIDER name="new slider" id="b7cd89715f76ddef" memberName="gain" virtualName=""
-          explicitFocusOrder="0" pos="32 24 150 24" min="0" max="1" int="0"
-          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="0.10000000000000000555"/>
   <LABEL name="new label" id="491a6e670b4b1660" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="192 24 150 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Gain" editableSingleClick="0" editableDoubleClick="0"
@@ -191,15 +193,14 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="new toggle button" id="978d986d74cd651a" memberName="toggleButton"
                 virtualName="" explicitFocusOrder="0" pos="32 64 150 24" buttonText="Emphasis on/off"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
-  <SLIDER name="new slider" id="efd08dd65e36581b" memberName="sliderSpeed"
-          virtualName="" explicitFocusOrder="0" pos="56 144 198 24" min="0.10000000000000000555"
-          max="10" int="0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <LABEL name="new label" id="d0f6c70f30ab4f86" memberName="label2" virtualName=""
          explicitFocusOrder="0" pos="256 144 150 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Speed" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
+  <GENERICCOMPONENT name="new component" id="b8a6cd9e43bd32aa" memberName="sliderSpeed"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="64 144 150 24"
+                    class="Component" params="*processor.getParameters()[kSpeed]"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -14,6 +14,7 @@
 #include "JuceHeader.h"
 
 #define DELAY_LINE_SIZE 441000
+#define BUFFER_SIZE 100
 
 class VariableDelayLine
 {
@@ -21,13 +22,13 @@ public:
     VariableDelayLine();
     ~VariableDelayLine() {}
     
-    void writeSamples(AudioSampleBuffer &buffer);
-    void readSamples(int readHeadIndex, AudioSampleBuffer &buffer);
+    void writeSample(float input);
+    float readSample(int readHeadIndex);
     
     void prepareToPlay(int numReadHeads, int* readHeadPositions);
     void reset();
         
-    void setSpeed(float speed) {currentSpeed = speed; DBG("Speed:\t" << currentSpeed);}
+    void setSpeed(float value) {speed = value; }
     void setReadPosition(int readHeadIndex, float position);
     
     float getDelayTimeMs(int readHeadIndex);
@@ -36,6 +37,14 @@ private:
     
     AudioSampleBuffer delayLine;
     
+    AudioSampleBuffer inputBufferA;
+    AudioSampleBuffer inputBufferB;
+
+    int inputBufferPtr = 0;
+    AudioSampleBuffer outputBuffer;
+
+    int outputBufferPtr;
+
     ScopedPointer<LagrangeInterpolator> writeHead;
     OwnedArray<LagrangeInterpolator> readHeads;
     
@@ -49,6 +58,9 @@ private:
     int* readPointers;
     
     float currentSpeed;
+    float speed;
+    
+    
     bool isActive;
     
     AudioProcessor* processor;

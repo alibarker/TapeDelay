@@ -43,11 +43,10 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
-      <RemoteRunnable
+      <PathRunnable
          runnableDebuggingMode = "0"
-         BundleIdentifier = "com.roli.pluginhost"
-         RemotePath = "/Users/alibarker89/SDKs/JUCE/examples/audio plugin host/Builds/MacOSX/build/Debug/Plugin Host.app">
-      </RemoteRunnable>
+         FilePath = "/&lt;placeholder&gt;">
+      </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"

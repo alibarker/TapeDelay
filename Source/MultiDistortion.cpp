@@ -12,6 +12,7 @@
 
 float MultiDistortion::processSample(float input, int type)
 {
+    
     switch (type) {
         case distTypeTube:
             return tubeClip(input);
@@ -21,6 +22,7 @@ float MultiDistortion::processSample(float input, int type)
             return input;
             break;
     }
+    
 }
 
 float MultiDistortion::tubeClip(float input)

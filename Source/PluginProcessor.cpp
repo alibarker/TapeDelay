@@ -17,11 +17,10 @@
 TapeDelayAudioProcessor::TapeDelayAudioProcessor()
 {
     // Add parameters in order of enum
-    addParameter(new AudioParameterFloat("0", "Gain", 0, 1, 1));
-    addParameter(new AudioParameterBool("1", "Emphasis On", 1));
-    addParameter(new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
-    addParameter(new AudioParameterFloat("3", "Speed", 0.01, 10, 1));
-
+    addParameter(pGain = new AudioParameterFloat("0", "Gain", 0, 1, 1));
+    addParameter(pEmphasisOn = new AudioParameterBool("1", "Emphasis On", 1));
+    addParameter(pFeedback = new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
+    addParameter(pSpeed = new AudioParameterFloat("3", "Speed", 0.25, 4, 1));
     
     // Setup Delayline
     tape = new VariableDelayLine();
@@ -125,9 +124,16 @@ void TapeDelayAudioProcessor::releaseResources()
 void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     // update parameters
-    tape->setSpeed(getParameters()[kSpeed]->getValue());
+    float speed = *pSpeed;
+    tape->setSpeed(speed);
+    DBG("Speed:" << speed);
+
+    
     float feedback = getParameters()[kFeedback]->getValue();
     float inputGain = getParameters()[kGain]->getValue();
+    
+    DBG("Feedback:\t" << feedback);
+    DBG("Input Gain:\t" << inputGain);
 
     int numSamples = buffer.getNumSamples();
     int numChannels = buffer.getNumChannels();
@@ -142,37 +148,42 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
     tapeOutput.clear();
     
     
-    // Mono sum
-    for (int channel = 0; channel < numChannels; ++channel)
-    {
-        tapeInput.addFrom(0, 0, buffer, channel, 0, numSamples);
-    }
-        
-        tape->readSamples(0, tapeOutput);
-    
 
-        tapeInput.addFrom(0, 0, tapeOutput, 0, 0, numSamples, feedback);
     
+    // Read from tape
+    
+    // Prepare input to be written to tape
+    
+    // Apply feedback processing
     for (int n = 0; n < numSamples; n++)
     {
-    
-        dist.setGain(1);
-    
-        float input = tapeInput.getSample(0, n);
-        float output = highpass[0]->processSingleSampleRaw(dist.processSample(input, distTypeTube));
+        float input = 0;
+
+        // Mono sum
+        for (int channel = 0; channel < numChannels; ++channel)
+        {
+            input += buffer.getSample(channel, n);
+        }
         
-        tapeInput.setSample(0, n, output);
+        float tapeOutput = tape->readSample(0);
+        
+        float tapeInput = tapeOutput * feedback + input * inputGain;
+        
+//        dist.setGain(1);
+    
+//        tapeInput = highpass[0]->processSingleSampleRaw(dist.processSample(tapeInput, distTypeTube));
+        
+        tape->writeSample(tapeInput);
+        
+        
+        buffer.setSample(0, n, tapeOutput);
+        
+        
     }
     
-    tape->writeSamples(tapeInput);
-        
-    buffer.applyGain(inputGain);
     
-    
-    for (int i = 0; i < numChannels; i++)
-    {
-        buffer.addFrom(i, 0, tapeOutput, 0, 0, numSamples);
-    }
+    // Write to tape
+
 }
 
 //==============================================================================
