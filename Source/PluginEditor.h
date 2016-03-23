@@ -56,7 +56,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
     class ParameterSlider;
-
+    class ParameterToggleButton;
     //[/UserVariables]
 
     //==============================================================================
@@ -64,6 +64,15 @@ private:
     ScopedPointer<ToggleButton> toggleButton;
     ScopedPointer<Label> label2;
     ScopedPointer<ParameterSlider> sliderSpeed;
+    ScopedPointer<ParameterSlider> sliderReadPosition1;
+    ScopedPointer<ParameterSlider> sliderReadPosition2;
+    ScopedPointer<ParameterSlider> sliderReadPosition3;
+    ScopedPointer<ParameterSlider> sliderReadGain1;
+    ScopedPointer<ParameterSlider> sliderReadGain2;
+    ScopedPointer<ParameterSlider> sliderReadGain3;
+    ScopedPointer<ParameterSlider> sliderInputGain;
+    ScopedPointer<Label> label3;
+    ScopedPointer<ParameterSlider> sliderOutputGain;
 
 
     //==============================================================================

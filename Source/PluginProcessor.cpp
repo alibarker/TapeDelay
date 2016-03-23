@@ -17,11 +17,18 @@
 TapeDelayAudioProcessor::TapeDelayAudioProcessor()
 {
     // Add parameters in order of enum
-    addParameter(pGain = new AudioParameterFloat("0", "Gain", 0, 1, 1));
+    addParameter(pInputGain = new AudioParameterFloat("in", "Input Gain", 0, 1, 1));
+    addParameter(pOutputGain = new AudioParameterFloat("out", "Output Gain", 0, 1, 1));
     addParameter(pEmphasisOn = new AudioParameterBool("1", "Emphasis On", 1));
     addParameter(pFeedback = new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
-    addParameter(pSpeed = new AudioParameterFloat("3", "Speed", 0.25, 4, 1));
     
+    addParameter(pReadPosition1 = new AudioParameterFloat("3", "Read Head Position 1", 0, 1, 1));
+    addParameter(pReadPosition2 = new AudioParameterFloat("3", "Read Head Position 2", 0, 1, 0.5));
+    addParameter(pReadPosition3 = new AudioParameterFloat("3", "Read Head Position 3", 0, 1, 0.75));
+    addParameter(pReadGain1 = new AudioParameterFloat("3", "Read Head Gain 1", 0, 1, 0.5));
+    addParameter(pReadGain2 = new AudioParameterFloat("3", "Read Head Gain 2", 0, 1, 0.5));
+    addParameter(pReadGain3 = new AudioParameterFloat("3", "Read Head Gain 3", 0, 1, 0.5));
+
     // Setup Delayline
     tape = new VariableDelayLine();
     
@@ -130,7 +137,7 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 
     
     float feedback = getParameters()[kFeedback]->getValue();
-    float inputGain = getParameters()[kGain]->getValue();
+    float inputGain = getParameters()[kInputGain]->getValue();
     
     DBG("Feedback:\t" << feedback);
     DBG("Input Gain:\t" << inputGain);

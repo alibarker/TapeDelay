@@ -17,10 +17,16 @@
 
 
 enum Parameters {
-    kGain = 0,
-    kEmphasisOn,
+    kInputGain = 0,
+    kOutputGain,
     kFeedback,
     kSpeed,
+    kReadPosition1,
+    kReadPosition2,
+    kReadPosition3,
+    kReadGain1,
+    kReadGain2,
+    kReadGain3,
     kNumParameters
 };
 
@@ -65,7 +71,16 @@ public:
     
     // Parameters
 
-    AudioParameterFloat* pGain, *pFeedback, *pSpeed;
+    AudioParameterFloat* pInputGain, *pOutputGain, *pFeedback, *pSpeed;
+    
+    AudioParameterFloat* pReadPosition1;
+    AudioParameterFloat* pReadPosition2;
+    AudioParameterFloat* pReadPosition3;
+    AudioParameterFloat* pReadGain1;
+    AudioParameterFloat* pReadGain2;
+    AudioParameterFloat* pReadGain3;
+    
+    
     AudioParameterBool* pEmphasisOn;
 private:
     //==============================================================================
