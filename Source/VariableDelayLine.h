@@ -29,7 +29,7 @@ public:
     void reset();
         
     void setSpeed(float value) {speed = value; }
-    void setReadPosition(int readHeadIndex, float position);
+    void setReadPosition(int readHeadIndex, int position);
     
     float getDelayTimeMs(int readHeadIndex);
     

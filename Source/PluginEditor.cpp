@@ -60,21 +60,22 @@ public:
             Slider::setValue (newValue);
     }
 
-    AudioProcessorParameter& param;
+    AudioProcessorParameter& param; 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterSlider)
 };
 
-class TapeDelayAudioProcessorEditor::ParameterToggleButton   : public Button,
+class TapeDelayAudioProcessorEditor::ParameterToggleButton   : public ToggleButton,
 private Timer
 {
 public:
     ParameterToggleButton (AudioProcessorParameter& p)
-    : Button (p.getName (256)), param (p)
+    : ToggleButton (p.getName (256)), param (p)
     {
-        setRange (0.0, 1.0, 0.0);
+        setToggleState(true, dontSendNotification);
         startTimerHz (30);
         updateTogglePos();
+        setClickingTogglesState(true);
     }
     
     void buttonStateChanged() override
@@ -87,20 +88,20 @@ public:
 //    void startedDragging() override     { param.beginChangeGesture(); }
 //    void stoppedDragging() override     { param.endChangeGesture();   }
     
-    double getValueFromText (const String& text) override   { return param.getValueForText (text); }
-    String getTextFromValue (bool value) override         { return param.getText ((bool) value, 1024); }
+//    double getValueFromText (const String& text) override   { return param.getValueForText (text); }
+//    String getTextFromValue (bool value) override         { return param.getText ((bool) value, 1024); }
     
     void updateTogglePos()
     {
         const bool newValue = param.getValue();
         
-        if (newValue != (bool) Button::getValue() && ! isMouseButtonDown())
-            Button::setValue (newValue);
+        if (newValue != ToggleButton::getToggleState() && ! isMouseButtonDown())
+            ToggleButton::setToggleState(newValue, sendNotification);
     }
     
     AudioProcessorParameter& param;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterSlider)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterToggleButton)
 };
 
 
@@ -172,6 +173,13 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
 
 
     //[UserPreSize]
+    
+    sliderInputGain->setSliderStyle(juce::Slider::LinearVertical);
+    sliderInputGain->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 40, 24);
+    
+    sliderOutputGain->setSliderStyle(juce::Slider::LinearVertical);
+    sliderOutputGain->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 40, 24);
+    
     //[/UserPreSize]
 
     setSize (600, 400);

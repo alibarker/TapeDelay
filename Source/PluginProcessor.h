@@ -15,6 +15,7 @@
 #include "MultiDistortion.h"
 #include "VariableDelayLine.h"
 
+const int numReadHeads = 3;
 
 enum Parameters {
     kInputGain = 0,

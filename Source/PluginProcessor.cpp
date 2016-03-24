@@ -19,9 +19,10 @@ TapeDelayAudioProcessor::TapeDelayAudioProcessor()
     // Add parameters in order of enum
     addParameter(pInputGain = new AudioParameterFloat("in", "Input Gain", 0, 1, 1));
     addParameter(pOutputGain = new AudioParameterFloat("out", "Output Gain", 0, 1, 1));
-    addParameter(pEmphasisOn = new AudioParameterBool("1", "Emphasis On", 1));
+//    addParameter(pEmphasisOn = new AudioParameterBool("1", "Emphasis On", 1));
     addParameter(pFeedback = new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
-    
+    addParameter(pSpeed = new AudioParameterFloat("speed", "Speed", 0.25, 4, 1));
+
     addParameter(pReadPosition1 = new AudioParameterFloat("3", "Read Head Position 1", 0, 1, 1));
     addParameter(pReadPosition2 = new AudioParameterFloat("3", "Read Head Position 2", 0, 1, 0.5));
     addParameter(pReadPosition3 = new AudioParameterFloat("3", "Read Head Position 3", 0, 1, 0.75));
@@ -101,15 +102,14 @@ void TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-
-    int numReadHeads = 3;
     
     int readPos[numReadHeads];
     
-    for (int i = 0; i < numReadHeads; i++) {
-        readPos[i] = sampleRate * (i+1)/4;
-    }
-    
+    readPos[0] = *pReadPosition1;
+    readPos[1] = *pReadPosition2;
+    readPos[2] = *pReadPosition3;
+    //THIS NEEDS TO CHANGE TO INTS
+
     tape->prepareToPlay(3, readPos);
     
     int numChannels = getTotalNumInputChannels();
@@ -172,7 +172,19 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
             input += buffer.getSample(channel, n);
         }
         
-        float tapeOutput = tape->readSample(0);
+        float tapeOutput = 0;
+        
+        
+        //THIS NEEDS TO CHANGE TO INTS
+        
+        tape->setReadPosition(0, *pReadPosition1);
+        tape->setReadPosition(1, *pReadPosition2);
+        tape->setReadPosition(2, *pReadPosition3);
+
+        for (int i = 0; i < numReadHeads; i++)
+        {
+            tapeOutput += tape->readSample(i);
+        }
         
         float tapeInput = tapeOutput * feedback + input * inputGain;
         
