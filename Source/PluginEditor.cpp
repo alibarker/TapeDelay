@@ -60,7 +60,7 @@ public:
             Slider::setValue (newValue);
     }
 
-    AudioProcessorParameter& param; 
+    AudioProcessorParameter& param;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterSlider)
 };
@@ -77,30 +77,30 @@ public:
         updateTogglePos();
         setClickingTogglesState(true);
     }
-    
+
     void buttonStateChanged() override
     {
         param.setValueNotifyingHost ((float) Button::getToggleState());
     }
-    
+
     void timerCallback() override       { updateTogglePos(); }
-    
+
 //    void startedDragging() override     { param.beginChangeGesture(); }
 //    void stoppedDragging() override     { param.endChangeGesture();   }
-    
+
 //    double getValueFromText (const String& text) override   { return param.getValueForText (text); }
 //    String getTextFromValue (bool value) override         { return param.getText ((bool) value, 1024); }
-    
+
     void updateTogglePos()
     {
         const bool newValue = param.getValue();
-        
+
         if (newValue != ToggleButton::getToggleState() && ! isMouseButtonDown())
             ToggleButton::setToggleState(newValue, sendNotification);
     }
-    
+
     AudioProcessorParameter& param;
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterToggleButton)
 };
 
@@ -171,15 +171,38 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     addAndMakeVisible (sliderOutputGain = new ParameterSlider (*processor.getParameters()[kOutputGain]));
     sliderOutputGain->setName ("Output Gain");
 
+    addAndMakeVisible (label4 = new Label ("new label",
+                                           TRANS("Input Gain")));
+    label4->setFont (Font (15.00f, Font::plain));
+    label4->setJustificationType (Justification::centredLeft);
+    label4->setEditable (false, false, false);
+    label4->setColour (TextEditor::textColourId, Colours::black);
+    label4->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (sliderFeedback = new ParameterSlider (*processor.getParameters()[kFeedback]));
+    sliderFeedback->setName ("Feedback");
+
+    addAndMakeVisible (label5 = new Label ("new label",
+                                           TRANS("Feedback")));
+    label5->setFont (Font (15.00f, Font::plain));
+    label5->setJustificationType (Justification::centredLeft);
+    label5->setEditable (false, false, false);
+    label5->setColour (TextEditor::textColourId, Colours::black);
+    label5->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
-    
+
     sliderInputGain->setSliderStyle(juce::Slider::LinearVertical);
     sliderInputGain->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 40, 24);
-    
+
     sliderOutputGain->setSliderStyle(juce::Slider::LinearVertical);
     sliderOutputGain->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 40, 24);
-    
+
+    sliderFeedback->setSliderStyle(juce::Slider::Rotary );
+    sliderFeedback->setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 24);
+
+
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -207,6 +230,9 @@ TapeDelayAudioProcessorEditor::~TapeDelayAudioProcessorEditor()
     sliderInputGain = nullptr;
     label3 = nullptr;
     sliderOutputGain = nullptr;
+    label4 = nullptr;
+    sliderFeedback = nullptr;
+    label5 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -237,12 +263,15 @@ void TapeDelayAudioProcessorEditor::resized()
     sliderReadPosition1->setBounds (112, 179, 200, 24);
     sliderReadPosition2->setBounds (112, 202, 200, 24);
     sliderReadPosition3->setBounds (112, 225, 200, 24);
-    sliderReadGain1->setBounds (328, 179, 120, 24);
-    sliderReadGain2->setBounds (328, 202, 120, 24);
-    sliderReadGain3->setBounds (328, 225, 120, 24);
+    sliderReadGain1->setBounds (328, 179, 180, 24);
+    sliderReadGain2->setBounds (328, 202, 180, 24);
+    sliderReadGain3->setBounds (328, 225, 180, 24);
     sliderInputGain->setBounds (32, 136, 32, 136);
-    label3->setBounds (479, 104, 72, 24);
-    sliderOutputGain->setBounds (496, 136, 32, 136);
+    label3->setBounds (496, 104, 72, 24);
+    sliderOutputGain->setBounds (520, 136, 32, 136);
+    label4->setBounds (15, 104, 72, 24);
+    sliderFeedback->setBounds (256, 312, 136, 56);
+    label5->setBounds (280, 280, 72, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -309,25 +338,38 @@ BEGIN_JUCER_METADATA
                     virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 225 200 24"
                     class="Component" params="*processor.getParameters()[kReadPosition3]"/>
   <GENERICCOMPONENT name="Read Head Gain 1" id="f2bee4e05f5ba772" memberName="sliderReadGain1"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 179 120 24"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 179 180 24"
                     class="Component" params="*processor.getParameters()[kReadGain1]"/>
   <GENERICCOMPONENT name="Read Head Gain 2" id="1e3f8c27aaeee0" memberName="sliderReadGain2"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 202 120 24"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 202 180 24"
                     class="Component" params="*processor.getParameters()[kReadGain2]"/>
   <GENERICCOMPONENT name="Read Head Gain 3" id="563eb90a78e2393a" memberName="sliderReadGain3"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 225 120 24"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 225 180 24"
                     class="Component" params="*processor.getParameters()[kReadGain3]"/>
   <GENERICCOMPONENT name="Input Gain" id="391a936d0b3d9b7f" memberName="sliderInputGain"
                     virtualName="ParameterSlider" explicitFocusOrder="0" pos="32 136 32 136"
                     class="Component" params="*processor.getParameters()[kInputGain]"/>
   <LABEL name="new label" id="a075a7b25fb52d37" memberName="label3" virtualName=""
-         explicitFocusOrder="0" pos="479 104 72 24" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="496 104 72 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Output Gain" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15" bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="Output Gain" id="6c0f79ba621cee65" memberName="sliderOutputGain"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="496 136 32 136"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="520 136 32 136"
                     class="Component" params="*processor.getParameters()[kOutputGain]"/>
+  <LABEL name="new label" id="63127774c1471aa7" memberName="label4" virtualName=""
+         explicitFocusOrder="0" pos="15 104 72 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Input Gain" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="33"/>
+  <GENERICCOMPONENT name="Feedback" id="4ade28566dfd337b" memberName="sliderFeedback"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="256 312 136 56"
+                    class="Component" params="*processor.getParameters()[kFeedback]"/>
+  <LABEL name="new label" id="7fd8294b15a91b94" memberName="label5" virtualName=""
+         explicitFocusOrder="0" pos="280 280 72 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Feedback" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -73,6 +73,9 @@ private:
     ScopedPointer<ParameterSlider> sliderInputGain;
     ScopedPointer<Label> label3;
     ScopedPointer<ParameterSlider> sliderOutputGain;
+    ScopedPointer<Label> label4;
+    ScopedPointer<ParameterSlider> sliderFeedback;
+    ScopedPointer<Label> label5;
 
 
     //==============================================================================

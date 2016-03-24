@@ -19,13 +19,12 @@ TapeDelayAudioProcessor::TapeDelayAudioProcessor()
     // Add parameters in order of enum
     addParameter(pInputGain = new AudioParameterFloat("in", "Input Gain", 0, 1, 1));
     addParameter(pOutputGain = new AudioParameterFloat("out", "Output Gain", 0, 1, 1));
-//    addParameter(pEmphasisOn = new AudioParameterBool("1", "Emphasis On", 1));
     addParameter(pFeedback = new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
     addParameter(pSpeed = new AudioParameterFloat("speed", "Speed", 0.25, 4, 1));
-
-    addParameter(pReadPosition1 = new AudioParameterFloat("3", "Read Head Position 1", 0, 1, 1));
-    addParameter(pReadPosition2 = new AudioParameterFloat("3", "Read Head Position 2", 0, 1, 0.5));
-    addParameter(pReadPosition3 = new AudioParameterFloat("3", "Read Head Position 3", 0, 1, 0.75));
+    
+    addParameter(pReadPosition1 = new AudioParameterFloat("3", "Read Head Position 1", 0, 4000, 100));
+    addParameter(pReadPosition2 = new AudioParameterFloat("3", "Read Head Position 2", 0, 4000, 300));
+    addParameter(pReadPosition3 = new AudioParameterFloat("3", "Read Head Position 3", 0, 4000, 500));
     addParameter(pReadGain1 = new AudioParameterFloat("3", "Read Head Gain 1", 0, 1, 0.5));
     addParameter(pReadGain2 = new AudioParameterFloat("3", "Read Head Gain 2", 0, 1, 0.5));
     addParameter(pReadGain3 = new AudioParameterFloat("3", "Read Head Gain 3", 0, 1, 0.5));
@@ -105,9 +104,9 @@ void TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     int readPos[numReadHeads];
     
-    readPos[0] = *pReadPosition1;
-    readPos[1] = *pReadPosition2;
-    readPos[2] = *pReadPosition3;
+    readPos[0] = floor(*pReadPosition1 * sampleRate / 1000);
+    readPos[1] = floor(*pReadPosition2 * sampleRate / 1000);
+    readPos[2] = floor(*pReadPosition3 * sampleRate / 1000);
     //THIS NEEDS TO CHANGE TO INTS
 
     tape->prepareToPlay(3, readPos);
@@ -134,13 +133,12 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
     float speed = *pSpeed;
     tape->setSpeed(speed);
     DBG("Speed:" << speed);
-
     
-    float feedback = getParameters()[kFeedback]->getValue();
-    float inputGain = getParameters()[kInputGain]->getValue();
+    float sampleRate = getSampleRate();
     
-    DBG("Feedback:\t" << feedback);
-    DBG("Input Gain:\t" << inputGain);
+    DBG("Feedback:\t" << *pFeedback);
+    DBG("Input Gain:\t" << *pInputGain);
+    DBG("Input Gain:\t" << *pOutputGain);
 
     int numSamples = buffer.getNumSamples();
     int numChannels = buffer.getNumChannels();
@@ -175,18 +173,15 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
         float tapeOutput = 0;
         
         
-        //THIS NEEDS TO CHANGE TO INTS
-        
-        tape->setReadPosition(0, *pReadPosition1);
-        tape->setReadPosition(1, *pReadPosition2);
-        tape->setReadPosition(2, *pReadPosition3);
+        tape->setReadPosition(0, floor(*pReadPosition1 * sampleRate / 1000));
+        tape->setReadPosition(1, floor(*pReadPosition2 * sampleRate / 1000));
+        tape->setReadPosition(2, floor(*pReadPosition3 * sampleRate / 1000));
 
-        for (int i = 0; i < numReadHeads; i++)
-        {
-            tapeOutput += tape->readSample(i);
-        }
-        
-        float tapeInput = tapeOutput * feedback + input * inputGain;
+        tapeOutput += tape->readSample(0) * *pReadGain1;
+        tapeOutput += tape->readSample(1) * *pReadGain2;
+        tapeOutput += tape->readSample(2) * *pReadGain3;
+
+        float tapeInput = tapeOutput * *pFeedback + input;
         
 //        dist.setGain(1);
     
@@ -195,7 +190,7 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
         tape->writeSample(tapeInput);
         
         
-        buffer.setSample(0, n, tapeOutput);
+        buffer.setSample(0, n, input * *pInputGain + tapeOutput * *pOutputGain);
         
         
     }
