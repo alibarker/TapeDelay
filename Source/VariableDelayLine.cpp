@@ -172,6 +172,7 @@ void VariableDelayLine::setReadPosition(int readHeadIndex, int position)
     
     readPointers[readHeadIndex] = (writePointer - position + DELAY_LINE_SIZE) % DELAY_LINE_SIZE;
 
+    DBG("readPointers[readHeadIndex]" << readPointers[readHeadIndex]);
 }
 
 float getDelayTimeMs(int readHeadIndex);

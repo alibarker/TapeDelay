@@ -21,7 +21,13 @@ TapeDelayAudioProcessor::TapeDelayAudioProcessor()
     addParameter(pOutputGain = new AudioParameterFloat("out", "Output Gain", 0, 1, 1));
     addParameter(pFeedback = new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
     addParameter(pSpeed = new AudioParameterFloat("speed", "Speed", 0.25, 4, 1));
-    
+    addParameter(pDistortion = new AudioParameterFloat("dist", "Distortion", 0.1, 20, 8));
+    addParameter(pQ = new AudioParameterFloat("q", "Q", -1, -0.01, -0.2));
+    addParameter(pDistGain = new AudioParameterFloat("distgain", "Distortion Fain", 0, 3, 1));
+    addParameter(pWowAmount = new AudioParameterFloat("wow", "Wow Gain", 0, 0.2, 0));
+    addParameter(pFlutterAmount = new AudioParameterFloat("flutter", "Flutter Gain", 0, 0.2, 0));
+
+
     addParameter(pReadPosition1 = new AudioParameterFloat("3", "Read Head Position 1", 0, 4000, 100));
     addParameter(pReadPosition2 = new AudioParameterFloat("3", "Read Head Position 2", 0, 4000, 300));
     addParameter(pReadPosition3 = new AudioParameterFloat("3", "Read Head Position 3", 0, 4000, 500));
@@ -31,6 +37,11 @@ TapeDelayAudioProcessor::TapeDelayAudioProcessor()
 
     // Setup Delayline
     tape = new VariableDelayLine();
+    
+    tapeSaturator = new Compressor;
+    
+    wowLFO = new LFO;
+    flutterLFO = new LFO;
     
 }
 
@@ -102,7 +113,24 @@ void TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     
+    wowLFO->setRate(0.3, sampleRate);
+    flutterLFO->setRate(10, sampleRate);
+
+    tapeSaturator->setParameters(100, -10, 5, 5, 1, 0);
+    tapeSaturator->prepareToPlay(sampleRate, samplesPerBlock, 1);
+    
+    tapeLowPass = new IIRFilter();
+    tapeLowPass->setCoefficients(IIRCoefficients::makeLowPass(sampleRate, 8000));
+    
+    tapeMidBoost = new IIRFilter();
+    tapeMidBoost->setCoefficients(IIRCoefficients::makePeakFilter(sampleRate, 500, 0.5, Decibels::decibelsToGain(+6)));
+    
+    tapeHighPass = new IIRFilter();
+    tapeHighPass->setCoefficients(IIRCoefficients::makeHighPass(sampleRate, 100));
     int readPos[numReadHeads];
+    
+    resamplerFilter = new IIRFilter();
+    resamplerFilter->setCoefficients(IIRCoefficients::makeLowPass(sampleRate, sampleRate/2));
     
     readPos[0] = floor(*pReadPosition1 * sampleRate / 1000);
     readPos[1] = floor(*pReadPosition2 * sampleRate / 1000);
@@ -130,30 +158,22 @@ void TapeDelayAudioProcessor::releaseResources()
 void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     // update parameters
-    float speed = *pSpeed;
-    tape->setSpeed(speed);
-    DBG("Speed:" << speed);
     
     float sampleRate = getSampleRate();
     
-    DBG("Feedback:\t" << *pFeedback);
-    DBG("Input Gain:\t" << *pInputGain);
-    DBG("Input Gain:\t" << *pOutputGain);
-
+//    DBG("Feedback:\t" << *pFeedback);
+//    DBG("Input Gain:\t" << *pInputGain);
+//    DBG("Output Gain:\t" << *pOutputGain);
+//    DBG("Speed:\t" << *pSpeed);
+//    DBG("Dist Gain:\t" << *pDistGain);
+//    DBG("Distortion:\t" << *pDistortion);
+//    DBG("Q:\t" << *pQ);
+//
+    
+    
     int numSamples = buffer.getNumSamples();
     int numChannels = buffer.getNumChannels();
     
-    AudioSampleBuffer tapeOutput;
-    AudioSampleBuffer tapeInput;
-    
-    tapeOutput.setSize(1, numSamples);
-    tapeInput.setSize(1, numSamples);
-    
-    tapeInput.clear();
-    tapeOutput.clear();
-    
-    
-
     
     // Read from tape
     
@@ -172,26 +192,49 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
         
         float tapeOutput = 0;
         
+        float speed = *pSpeed * (1 + wowLFO->getNextSample()* *pWowAmount)  * (1 + flutterLFO->getNextSample() * *pFlutterAmount);
         
-        tape->setReadPosition(0, floor(*pReadPosition1 * sampleRate / 1000));
-        tape->setReadPosition(1, floor(*pReadPosition2 * sampleRate / 1000));
-        tape->setReadPosition(2, floor(*pReadPosition3 * sampleRate / 1000));
+        if (speed < 0.1)
+            speed = 0.1;
+        
+        tape->setSpeed(speed);
+        
+  
+        
+
+        
+//        tape->setReadPosition(0, floor(*pReadPosition1 * sampleRate / 1000));
+//        tape->setReadPosition(1, floor(*pReadPosition2 * sampleRate / 1000));
+//        tape->setReadPosition(2, floor(*pReadPosition3 * sampleRate / 1000));
 
         tapeOutput += tape->readSample(0) * *pReadGain1;
         tapeOutput += tape->readSample(1) * *pReadGain2;
         tapeOutput += tape->readSample(2) * *pReadGain3;
 
+        
+        tapeOutput = tapeSaturator->processSample(tapeOutput);
+        
+        
         float tapeInput = tapeOutput * *pFeedback + input;
         
-//        dist.setGain(1);
-    
-//        tapeInput = highpass[0]->processSingleSampleRaw(dist.processSample(tapeInput, distTypeTube));
         
+        
+//        float tapeInput = input;
+        
+        dist.setGain(*pDistGain);
+        dist.setTreshold(*pQ);
+        dist.setDist(*pDistortion);
+
+        tapeInput = dist.processSample(tapeInput, distTypeTube);
+        
+        tapeInput = tapeLowPass->processSingleSampleRaw(tapeInput);
+        tapeInput = tapeMidBoost->processSingleSampleRaw(tapeInput);
+        tapeInput = tapeSaturator->processSample(tapeInput);
+
         tape->writeSample(tapeInput);
         
         
-        buffer.setSample(0, n, input * *pInputGain + tapeOutput * *pOutputGain);
-        
+        buffer.setSample(0, n,  input * *pInputGain + tapeOutput* *pOutputGain);
         
     }
     

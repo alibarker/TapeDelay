@@ -76,6 +76,16 @@ private:
     ScopedPointer<Label> label4;
     ScopedPointer<ParameterSlider> sliderFeedback;
     ScopedPointer<Label> label5;
+    ScopedPointer<ParameterSlider> sliderQ;
+    ScopedPointer<Label> label6;
+    ScopedPointer<ParameterSlider> sliderDistortion2;
+    ScopedPointer<Label> label7;
+    ScopedPointer<ParameterSlider> sliderDistGain;
+    ScopedPointer<Label> label8;
+    ScopedPointer<ParameterSlider> sliderFlutter;
+    ScopedPointer<Label> label9;
+    ScopedPointer<ParameterSlider> sliderWow;
+    ScopedPointer<Label> label10;
 
 
     //==============================================================================

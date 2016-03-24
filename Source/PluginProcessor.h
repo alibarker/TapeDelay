@@ -14,6 +14,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MultiDistortion.h"
 #include "VariableDelayLine.h"
+#include "Compressor.h"
+#include "LFO.h"
 
 const int numReadHeads = 3;
 
@@ -22,6 +24,12 @@ enum Parameters {
     kOutputGain,
     kFeedback,
     kSpeed,
+    kDistortion,
+    kQ,
+    kDistGain,
+    kWow,
+    kFlutter,
+    
     kReadPosition1,
     kReadPosition2,
     kReadPosition3,
@@ -80,7 +88,14 @@ public:
     AudioParameterFloat* pReadGain1;
     AudioParameterFloat* pReadGain2;
     AudioParameterFloat* pReadGain3;
+    AudioParameterFloat* pDistortion;
+    AudioParameterFloat* pFlutterAmount;
+    AudioParameterFloat* pWowAmount;
+
     
+    
+    AudioParameterFloat* pQ;
+    AudioParameterFloat* pDistGain;
     
     AudioParameterBool* pEmphasisOn;
 private:
@@ -89,6 +104,15 @@ private:
     OwnedArray<IIRFilter> highpass;
     MultiDistortion dist;
     
+    ScopedPointer<IIRFilter> resamplerFilter;
+    ScopedPointer<IIRFilter> tapeLowPass;
+    ScopedPointer<IIRFilter> tapeHighPass;
+    ScopedPointer<IIRFilter> tapeMidBoost;
+    ScopedPointer<Compressor> tapeSaturator;
+
+    ScopedPointer<LFO> wowLFO;
+    ScopedPointer<LFO> flutterLFO;
+
     ScopedPointer<VariableDelayLine> tape;
     
     

@@ -12,6 +12,10 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.1.0">
   <MAINGROUP id="PuKJtX" name="TapeDelay">
     <GROUP id="{C7738E4C-DF95-CECD-D20E-6774C79EF926}" name="Source">
+      <FILE id="aFVPk1" name="Compressor.cpp" compile="1" resource="0" file="Source/Compressor.cpp"/>
+      <FILE id="dGoEkx" name="Compressor.h" compile="0" resource="0" file="Source/Compressor.h"/>
+      <FILE id="dwdBSd" name="LFO.cpp" compile="1" resource="0" file="Source/LFO.cpp"/>
+      <FILE id="dSHdMs" name="LFO.h" compile="0" resource="0" file="Source/LFO.h"/>
       <FILE id="jOnYmy" name="MultiDistortion.cpp" compile="1" resource="0"
             file="Source/MultiDistortion.cpp"/>
       <FILE id="u81lvQ" name="MultiDistortion.h" compile="0" resource="0"
