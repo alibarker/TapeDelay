@@ -82,9 +82,9 @@ public:
 
     AudioParameterFloat* pInputGain, *pOutputGain, *pFeedback, *pSpeed;
     
-    AudioParameterFloat* pReadPosition1;
-    AudioParameterFloat* pReadPosition2;
-    AudioParameterFloat* pReadPosition3;
+    OwnedArray<AudioParameterFloat> pReadPositions;
+//    AudioParameterFloat* pReadPosition2;
+//    AudioParameterFloat* pReadPosition3;
     AudioParameterFloat* pReadGain1;
     AudioParameterFloat* pReadGain2;
     AudioParameterFloat* pReadGain3;
@@ -92,7 +92,7 @@ public:
     AudioParameterFloat* pFlutterAmount;
     AudioParameterFloat* pWowAmount;
 
-    
+    float* previousReadPos;
     
     AudioParameterFloat* pQ;
     AudioParameterFloat* pDistGain;

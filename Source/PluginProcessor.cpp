@@ -28,9 +28,12 @@ TapeDelayAudioProcessor::TapeDelayAudioProcessor()
     addParameter(pFlutterAmount = new AudioParameterFloat("flutter", "Flutter Gain", 0, 0.2, 0));
 
 
-    addParameter(pReadPosition1 = new AudioParameterFloat("3", "Read Head Position 1", 0, 4000, 100));
-    addParameter(pReadPosition2 = new AudioParameterFloat("3", "Read Head Position 2", 0, 4000, 300));
-    addParameter(pReadPosition3 = new AudioParameterFloat("3", "Read Head Position 3", 0, 4000, 500));
+    for (int i = 0; i < numReadHeads; i++)
+    {
+        pReadPositions.add(new AudioParameterFloat("3", &"Read Head Position " [ i], 0, 4000, 100 + i*200));
+        addParameter(pReadPositions[i]);
+    }
+    
     addParameter(pReadGain1 = new AudioParameterFloat("3", "Read Head Gain 1", 0, 1, 0.5));
     addParameter(pReadGain2 = new AudioParameterFloat("3", "Read Head Gain 2", 0, 1, 0.5));
     addParameter(pReadGain3 = new AudioParameterFloat("3", "Read Head Gain 3", 0, 1, 0.5));
@@ -132,12 +135,14 @@ void TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     resamplerFilter = new IIRFilter();
     resamplerFilter->setCoefficients(IIRCoefficients::makeLowPass(sampleRate, sampleRate/2));
     
-    readPos[0] = floor(*pReadPosition1 * sampleRate / 1000);
-    readPos[1] = floor(*pReadPosition2 * sampleRate / 1000);
-    readPos[2] = floor(*pReadPosition3 * sampleRate / 1000);
-    //THIS NEEDS TO CHANGE TO INTS
-
+    previousReadPos = new float[numReadHeads];
+    
+    for (int i = 0; i < numReadHeads; i++) {
+        previousReadPos[i] = readPos[i] = floor(*pReadPositions[i] * sampleRate/1000);
+    }
+    
     tape->prepareToPlay(3, readPos);
+    
     
     int numChannels = getTotalNumInputChannels();
     
@@ -200,12 +205,12 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
         tape->setSpeed(speed);
         
   
-        
-
-        
-//        tape->setReadPosition(0, floor(*pReadPosition1 * sampleRate / 1000));
-//        tape->setReadPosition(1, floor(*pReadPosition2 * sampleRate / 1000));
-//        tape->setReadPosition(2, floor(*pReadPosition3 * sampleRate / 1000));
+        for (int i = 0; i < numReadHeads; i++) {
+            if (*pReadPositions[i] != previousReadPos[i]) {
+                tape->setReadPosition(i, *pReadPositions[i] * sampleRate /1000);
+                previousReadPos[i] = *pReadPositions[i];
+            }
+        }
 
         tapeOutput += tape->readSample(0) * *pReadGain1;
         tapeOutput += tape->readSample(1) * *pReadGain2;
