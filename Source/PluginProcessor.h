@@ -25,10 +25,10 @@ enum Parameters {
     kFeedback,
     kSpeed,
     kDistortion,
-    kQ,
-    kDistGain,
     kWow,
     kFlutter,
+    kLowCutoff,
+    kHighCutoff,
     
     kReadPosition1,
     kReadPosition2,
@@ -91,11 +91,12 @@ public:
     AudioParameterFloat* pDistortion;
     AudioParameterFloat* pFlutterAmount;
     AudioParameterFloat* pWowAmount;
+    AudioParameterFloat* pLowCutoff;
+    AudioParameterFloat* pHighCutoff;
 
     float* previousReadPos;
     
     AudioParameterFloat* pQ;
-    AudioParameterFloat* pDistGain;
     
     AudioParameterBool* pEmphasisOn;
 private:
@@ -103,6 +104,8 @@ private:
     
     OwnedArray<IIRFilter> highpass;
     MultiDistortion dist;
+    
+    float previousLowCutoff, previousHighCutoff;
     
     ScopedPointer<IIRFilter> resamplerFilter;
     ScopedPointer<IIRFilter> tapeLowPass;

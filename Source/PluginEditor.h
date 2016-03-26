@@ -34,8 +34,7 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class TapeDelayAudioProcessorEditor  : public AudioProcessorEditor,
-                                       public ButtonListener
+class TapeDelayAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
@@ -48,7 +47,6 @@ public:
 
     void paint (Graphics& g);
     void resized();
-    void buttonClicked (Button* buttonThatWasClicked);
 
 
 
@@ -61,7 +59,6 @@ private:
 
     //==============================================================================
     ScopedPointer<Label> label;
-    ScopedPointer<ToggleButton> toggleButton;
     ScopedPointer<Label> label2;
     ScopedPointer<ParameterSlider> sliderSpeed;
     ScopedPointer<ParameterSlider> sliderReadPosition1;
@@ -76,16 +73,16 @@ private:
     ScopedPointer<Label> label4;
     ScopedPointer<ParameterSlider> sliderFeedback;
     ScopedPointer<Label> label5;
-    ScopedPointer<ParameterSlider> sliderQ;
-    ScopedPointer<Label> label6;
-    ScopedPointer<ParameterSlider> sliderDistortion2;
+    ScopedPointer<ParameterSlider> sliderDistortion;
     ScopedPointer<Label> label7;
-    ScopedPointer<ParameterSlider> sliderDistGain;
-    ScopedPointer<Label> label8;
     ScopedPointer<ParameterSlider> sliderFlutter;
     ScopedPointer<Label> label9;
     ScopedPointer<ParameterSlider> sliderWow;
     ScopedPointer<Label> label10;
+    ScopedPointer<ParameterSlider> sliderLowCutoff;
+    ScopedPointer<Label> label6;
+    ScopedPointer<ParameterSlider> sliderHighCutoff;
+    ScopedPointer<Label> label8;
 
 
     //==============================================================================
