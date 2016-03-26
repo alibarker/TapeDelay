@@ -34,7 +34,8 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class TapeDelayAudioProcessorEditor  : public AudioProcessorEditor
+class TapeDelayAudioProcessorEditor  : public AudioProcessorEditor,
+                                       public Timer
 {
 public:
     //==============================================================================
@@ -43,6 +44,9 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+
+    void timerCallback();
+
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -55,6 +59,9 @@ private:
 
     class ParameterSlider;
     class ParameterToggleButton;
+
+    TapeDelayAudioProcessor *parentProcessor;
+
     //[/UserVariables]
 
     //==============================================================================
@@ -83,6 +90,9 @@ private:
     ScopedPointer<Label> label6;
     ScopedPointer<ParameterSlider> sliderHighCutoff;
     ScopedPointer<Label> label8;
+    ScopedPointer<Label> labelReadHead1;
+    ScopedPointer<Label> labelReadHead2;
+    ScopedPointer<Label> labelReadHead3;
 
 
     //==============================================================================

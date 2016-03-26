@@ -111,9 +111,11 @@ public:
 
 //==============================================================================
 TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProcessor* ownerFilter)
-    : AudioProcessorEditor (ownerFilter)
+    : AudioProcessorEditor (ownerFilter), parentProcessor(ownerFilter)
 {
     //[Constructor_pre] You can add your own custom stuff here..
+
+    startTimerHz(30);
     //[/Constructor_pre]
 
     addAndMakeVisible (label = new Label ("new label",
@@ -241,6 +243,30 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     label8->setColour (TextEditor::textColourId, Colours::black);
     label8->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    addAndMakeVisible (labelReadHead1 = new Label ("new label",
+                                                   TRANS("label text")));
+    labelReadHead1->setFont (Font (15.00f, Font::plain));
+    labelReadHead1->setJustificationType (Justification::centredLeft);
+    labelReadHead1->setEditable (false, false, false);
+    labelReadHead1->setColour (TextEditor::textColourId, Colours::black);
+    labelReadHead1->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (labelReadHead2 = new Label ("new label",
+                                                   TRANS("label text")));
+    labelReadHead2->setFont (Font (15.00f, Font::plain));
+    labelReadHead2->setJustificationType (Justification::centredLeft);
+    labelReadHead2->setEditable (false, false, false);
+    labelReadHead2->setColour (TextEditor::textColourId, Colours::black);
+    labelReadHead2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (labelReadHead3 = new Label ("new label",
+                                                   TRANS("label text")));
+    labelReadHead3->setFont (Font (15.00f, Font::plain));
+    labelReadHead3->setJustificationType (Justification::centredLeft);
+    labelReadHead3->setEditable (false, false, false);
+    labelReadHead3->setColour (TextEditor::textColourId, Colours::black);
+    labelReadHead3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
 
@@ -312,6 +338,9 @@ TapeDelayAudioProcessorEditor::~TapeDelayAudioProcessorEditor()
     label6 = nullptr;
     sliderHighCutoff = nullptr;
     label8 = nullptr;
+    labelReadHead1 = nullptr;
+    labelReadHead2 = nullptr;
+    labelReadHead3 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -338,9 +367,9 @@ void TapeDelayAudioProcessorEditor::resized()
     label->setBounds (15, 104, 72, 24);
     label2->setBounds (328, 136, 150, 24);
     sliderSpeed->setBounds (112, 136, 200, 24);
-    sliderReadPosition1->setBounds (112, 179, 200, 24);
-    sliderReadPosition2->setBounds (112, 202, 200, 24);
-    sliderReadPosition3->setBounds (112, 225, 200, 24);
+    sliderReadPosition1->setBounds (112, 179, 160, 24);
+    sliderReadPosition2->setBounds (112, 202, 160, 24);
+    sliderReadPosition3->setBounds (112, 225, 160, 24);
     sliderReadGain1->setBounds (328, 179, 180, 24);
     sliderReadGain2->setBounds (328, 202, 180, 24);
     sliderReadGain3->setBounds (328, 224, 180, 25);
@@ -360,6 +389,9 @@ void TapeDelayAudioProcessorEditor::resized()
     label6->setBounds (144, 312, 72, 24);
     sliderHighCutoff->setBounds (200, 344, 232, 32);
     label8->setBounds (136, 345, 72, 24);
+    labelReadHead1->setBounds (272, 178, 56, 24);
+    labelReadHead2->setBounds (272, 201, 56, 24);
+    labelReadHead3->setBounds (272, 224, 56, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -367,6 +399,24 @@ void TapeDelayAudioProcessorEditor::resized()
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void TapeDelayAudioProcessorEditor::timerCallback()
+{
+    float speed = *parentProcessor->pSpeed;
+    juce::String  time1 = String(*parentProcessor->pReadPositions[0] * speed);
+    juce::String  time2 = String(*parentProcessor->pReadPositions[1] * speed);
+    juce::String  time3 = String(*parentProcessor->pReadPositions[2] * speed);
+
+    time1+= " ms";
+    time2+= " ms";
+    time3+= " ms";
+
+    labelReadHead1->setText( time1, dontSendNotification);
+    labelReadHead2->setText( time2, dontSendNotification);
+    labelReadHead3->setText( time3, dontSendNotification);
+
+}
+
 //[/MiscUserCode]
 
 
@@ -380,8 +430,8 @@ void TapeDelayAudioProcessorEditor::resized()
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="TapeDelayAudioProcessorEditor"
-                 componentName="" parentClasses="public AudioProcessorEditor"
-                 constructorParams="TapeDelayAudioProcessor* ownerFilter" variableInitialisers="AudioProcessorEditor (ownerFilter)"
+                 componentName="" parentClasses="public AudioProcessorEditor, public Timer"
+                 constructorParams="TapeDelayAudioProcessor* ownerFilter" variableInitialisers="AudioProcessorEditor (ownerFilter), parentProcessor(ownerFilter)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ffffffff"/>
@@ -399,13 +449,13 @@ BEGIN_JUCER_METADATA
                     explicitFocusOrder="0" pos="112 136 200 24" class="Component"
                     params="*processor.getParameters()[kSpeed]"/>
   <GENERICCOMPONENT name="Read Head Position 1" id="588299d546d8baa7" memberName="sliderReadPosition1"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 179 200 24"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 179 160 24"
                     class="Component" params="*processor.getParameters()[kReadPosition1]"/>
   <GENERICCOMPONENT name="Read Head Position 2" id="d2d34473059c0cbd" memberName="sliderReadPosition2"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 202 200 24"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 202 160 24"
                     class="Component" params="*processor.getParameters()[kReadPosition2]"/>
   <GENERICCOMPONENT name="Read Head Position 3" id="36701f5399abe6c1" memberName="sliderReadPosition3"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 225 200 24"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="112 225 160 24"
                     class="Component" params="*processor.getParameters()[kReadPosition3]"/>
   <GENERICCOMPONENT name="Read Head Gain 1" id="f2bee4e05f5ba772" memberName="sliderReadGain1"
                     virtualName="ParameterSlider" explicitFocusOrder="0" pos="328 179 180 24"
@@ -480,6 +530,21 @@ BEGIN_JUCER_METADATA
          edBkgCol="0" labelText="High Cut&#10;" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="3af6bf37dbe38465" memberName="labelReadHead1"
+         virtualName="" explicitFocusOrder="0" pos="272 178 56 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="label text" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="8d3211ad35ec6462" memberName="labelReadHead2"
+         virtualName="" explicitFocusOrder="0" pos="272 201 56 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="label text" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="a45d4bfb7249f127" memberName="labelReadHead3"
+         virtualName="" explicitFocusOrder="0" pos="272 224 56 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="label text" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
