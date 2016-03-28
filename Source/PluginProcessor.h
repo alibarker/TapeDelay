@@ -29,7 +29,6 @@ enum Parameters {
     kFlutter,
     kLowCutoff,
     kHighCutoff,
-    
     kReadPosition1,
     kReadPosition2,
     kReadPosition3,
@@ -80,38 +79,35 @@ public:
     
     // Parameters
 
-    AudioParameterFloat* pInputGain, *pOutputGain, *pFeedback, *pSpeed;
+    ScopedPointer<AudioParameterFloat> pInputGain;
+    ScopedPointer<AudioParameterFloat> pOutputGain;
+    ScopedPointer<AudioParameterFloat> pFeedback;
+    ScopedPointer<AudioParameterFloat> pSpeed;
     
     OwnedArray<AudioParameterFloat> pReadPositions;
-//    AudioParameterFloat* pReadPosition2;
-//    AudioParameterFloat* pReadPosition3;
-    AudioParameterFloat* pReadGain1;
-    AudioParameterFloat* pReadGain2;
-    AudioParameterFloat* pReadGain3;
-    AudioParameterFloat* pDistortion;
-    AudioParameterFloat* pFlutterAmount;
-    AudioParameterFloat* pWowAmount;
-    AudioParameterFloat* pLowCutoff;
-    AudioParameterFloat* pHighCutoff;
+    ScopedPointer<AudioParameterFloat> pReadGain1;
+    ScopedPointer<AudioParameterFloat> pReadGain2;
+    ScopedPointer<AudioParameterFloat> pReadGain3;
+    ScopedPointer<AudioParameterFloat> pDistortion;
+    ScopedPointer<AudioParameterFloat> pFlutterAmount;
+    ScopedPointer<AudioParameterFloat> pWowAmount;
+    ScopedPointer<AudioParameterFloat> pLowCutoff;
+    ScopedPointer<AudioParameterFloat> pHighCutoff;
 
-    float* previousReadPos;
     
-    AudioParameterFloat* pQ;
-    
-    AudioParameterBool* pEmphasisOn;
 private:
     //==============================================================================
     
-    OwnedArray<IIRFilter> highpass;
-    MultiDistortion dist;
     
     float previousLowCutoff, previousHighCutoff;
-    
-    ScopedPointer<IIRFilter> resamplerFilter;
+    float* previousReadPos;
+
+    // Sub Components
     ScopedPointer<IIRFilter> tapeLowPass;
     ScopedPointer<IIRFilter> tapeHighPass;
     ScopedPointer<IIRFilter> tapeMidBoost;
     ScopedPointer<Compressor> tapeSaturator;
+    ScopedPointer<MultiDistortion> dist;
 
     ScopedPointer<LFO> wowLFO;
     ScopedPointer<LFO> flutterLFO;

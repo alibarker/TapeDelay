@@ -31,40 +31,35 @@ public:
     void setSpeed(float value) {speed = value; }
     void setReadPosition(int readHeadIndex, int position);
     
-    float getDelayTimeMs(int readHeadIndex);
-    
 private:
-    
+    // the delay line buffer
     AudioSampleBuffer delayLine;
     
+    // buffers and pointers used on input and output
     AudioSampleBuffer inputBufferA;
     AudioSampleBuffer inputBufferB;
-
     int inputBufferPtr = 0;
     AudioSampleBuffer outputBuffer;
-
     int outputBufferPtr;
+    AudioSampleBuffer unusedSamples;
+    int numUnusedSamples;
 
+
+    // tape heads
     ScopedPointer<LagrangeInterpolator> writeHead;
     OwnedArray<LagrangeInterpolator> readHeads;
     
+    // delay line pointrs
     int writePointer;
-    AudioSampleBuffer writeInputBuffer;
-    int writeInputBufferWritePointer = 0;
-    int writeInputBufferReadPointer = 0;
-    
-    AudioSampleBuffer unusedSamples;
-    int numUnusedSamples;
     int* readPointers;
     
+    // actual speed
     float currentSpeed;
+    
+    // what the speed parameter is set to
     float speed;
     
-    
-    bool isActive;
-    
-    AudioProcessor* processor;
-    
+    bool isActive;    
     
 };
 

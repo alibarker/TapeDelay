@@ -232,6 +232,8 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
 
 
     //[UserPreSize]
+    
+    // Custom code to set slider styles
 
     sliderInputGain->setSliderStyle(juce::Slider::LinearVertical);
     sliderInputGain->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 40, 24);
@@ -393,6 +395,9 @@ void TapeDelayAudioProcessorEditor::resized()
 
 void TapeDelayAudioProcessorEditor::timerCallback()
 {
+    // This function generates the total delay time of each read head
+    // and displays it on the GUI
+    
     float speed = *parentProcessor->pSpeed;
     juce::String  time1 = String(*parentProcessor->pReadPositions[0] * speed, 1);
     juce::String  time2 = String(*parentProcessor->pReadPositions[1] * speed, 1);
