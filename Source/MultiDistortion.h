@@ -4,6 +4,9 @@
     MultiDistortion.h
     Created: 16 Mar 2016 8:45:44pm
     Author:  Alistair Barker
+ 
+    Selectable distortion class, both based on formulas from the DAFx book
+
 
   ==============================================================================
 */

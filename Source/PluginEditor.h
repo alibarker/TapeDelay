@@ -65,7 +65,9 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> label;
+    ScopedPointer<GroupComponent> groupComponent3;
+    ScopedPointer<GroupComponent> groupComponent2;
+    ScopedPointer<GroupComponent> groupComponent;
     ScopedPointer<Label> label2;
     ScopedPointer<ParameterSlider> sliderSpeed;
     ScopedPointer<ParameterSlider> sliderReadPosition1;

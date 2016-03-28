@@ -16,13 +16,10 @@
 
 class LFO {
 public:
-    LFO();
     void setRate(float rateHz, float sampleRate);
     float getNextSample();
     
 private:
-    
-    float waveTable[WAVETABLE_LENGTH];
     float phase;
     float phaseInc;
 

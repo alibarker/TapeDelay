@@ -4,7 +4,7 @@
  MultiDistortion.cpp
  Created: 16 Mar 2016 8:45:44pm
  Author:  Alistair Barker
- 
+  
  ==============================================================================
  */
 
@@ -13,7 +13,8 @@
 
 float MultiDistortion::processSample(float input, int type)
 {
-    
+ 
+    // process input sample based on type
     switch (type) {
         case distTypeTube:
             return tubeClip(input);
@@ -31,11 +32,15 @@ float MultiDistortion::processSample(float input, int type)
 
 float MultiDistortion::tubeClip(float input)
 {
-    
+    // based on the tube emulation in DAFx book
+
     float output;
     
+    // apply gain
     input*=gain;
     
+    // apply input/output curve
+    // if statements stop division by zero
     if (threshold == 0)
     {
         if(input == threshold)
@@ -52,20 +57,22 @@ float MultiDistortion::tubeClip(float input)
         else
             output = (input-threshold)/(1 - exp(-distortion*(input - threshold))) + threshold/(1-exp(distortion*threshold));
     }
-    
-    
-    
+
     return output;
 }
 
 float MultiDistortion::softClip(float input)
 {
+    // based on the soft clip function in DAFx book
+    
+    // apply gain
     input*=gain;
     
     float output;
-    
     float clipPoint = fabs(threshold);
     
+    
+    // apply non-linearity depending on the input level
     if (fabs(input) < clipPoint) {
         output = 2 * input;
     } else if (fabs(input) >= clipPoint && std::fabs(input) <= 2 * clipPoint) {
@@ -79,8 +86,6 @@ float MultiDistortion::softClip(float input)
         if (input < 0) output = -1;
 
     }
-    
-
     
     return output;
 }
