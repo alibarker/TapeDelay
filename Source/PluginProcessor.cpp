@@ -173,6 +173,8 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
             input += buffer.getSample(channel, n);
         }
         
+        input /= numChannels;
+        
         float tapeOutput = 0;
         
         
