@@ -35,8 +35,7 @@
                                                                     //[/Comments]
 */
 class TapeDelayAudioProcessorEditor  : public AudioProcessorEditor,
-                                       public SliderListener,
-                                       public ButtonListener
+                                       public Timer
 {
 public:
     //==============================================================================
@@ -45,25 +44,55 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+
+    void timerCallback();
+
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
-    void sliderValueChanged (Slider* sliderThatWasMoved);
-    void buttonClicked (Button* buttonThatWasClicked);
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+
+    class ParameterSlider;
+    class ParameterToggleButton;
+
+    TapeDelayAudioProcessor *parentProcessor;
+
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> gain;
-    ScopedPointer<Label> label;
-    ScopedPointer<ToggleButton> toggleButton;
-    ScopedPointer<Slider> sliderSpeed;
+    ScopedPointer<GroupComponent> groupComponent3;
+    ScopedPointer<GroupComponent> groupComponent2;
+    ScopedPointer<GroupComponent> groupComponent;
     ScopedPointer<Label> label2;
+    ScopedPointer<ParameterSlider> sliderSpeed;
+    ScopedPointer<ParameterSlider> sliderReadPosition1;
+    ScopedPointer<ParameterSlider> sliderReadPosition2;
+    ScopedPointer<ParameterSlider> sliderReadPosition3;
+    ScopedPointer<ParameterSlider> sliderReadGain1;
+    ScopedPointer<ParameterSlider> sliderReadGain2;
+    ScopedPointer<ParameterSlider> sliderReadGain3;
+    ScopedPointer<ParameterSlider> sliderInputGain;
+    ScopedPointer<Label> label3;
+    ScopedPointer<ParameterSlider> sliderOutputGain;
+    ScopedPointer<Label> label4;
+    ScopedPointer<ParameterSlider> sliderFeedback;
+    ScopedPointer<Label> label5;
+    ScopedPointer<ParameterSlider> sliderFlutter;
+    ScopedPointer<Label> label9;
+    ScopedPointer<ParameterSlider> sliderWow;
+    ScopedPointer<Label> label10;
+    ScopedPointer<ParameterSlider> sliderLowCutoff;
+    ScopedPointer<Label> label6;
+    ScopedPointer<ParameterSlider> sliderHighCutoff;
+    ScopedPointer<Label> label8;
+    ScopedPointer<Label> labelReadHead1;
+    ScopedPointer<Label> labelReadHead2;
+    ScopedPointer<Label> labelReadHead3;
 
 
     //==============================================================================

@@ -14,13 +14,26 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MultiDistortion.h"
 #include "VariableDelayLine.h"
+#include "Compressor.h"
+#include "LFO.h"
 
+const int numReadHeads = 3;
 
 enum Parameters {
-    kGain = 0,
-    kEmphasisOn,
+    kInputGain = 0,
+    kOutputGain,
     kFeedback,
     kSpeed,
+    kWow,
+    kFlutter,
+    kLowCutoff,
+    kHighCutoff,
+    kReadPosition1,
+    kReadPosition2,
+    kReadPosition3,
+    kReadGain1,
+    kReadGain2,
+    kReadGain3,
     kNumParameters
 };
 
@@ -63,13 +76,45 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
+    // Parameters
+
+    AudioParameterFloat* pInputGain;
+    AudioParameterFloat* pOutputGain;
+    AudioParameterFloat* pFeedback;
+    AudioParameterFloat* pSpeed;
+    AudioParameterFloat* pReadPosition1;
+    AudioParameterFloat* pReadPosition2;
+    AudioParameterFloat* pReadPosition3;
+
+    AudioParameterFloat*  pReadGain1;
+    AudioParameterFloat* pReadGain2;
+    AudioParameterFloat* pReadGain3;
+    AudioParameterFloat* pDistortion;
+    AudioParameterFloat* pFlutterAmount;
+    AudioParameterFloat* pWowAmount;
+    AudioParameterFloat* pLowCutoff;
+    AudioParameterFloat* pHighCutoff;
+
+    
 private:
     //==============================================================================
     
-    OwnedArray<IIRFilter> highpass;
-    MultiDistortion dist;
     
+    float previousLowCutoff, previousHighCutoff;
+    float* previousReadPos;
+
+    // Sub Components
+    ScopedPointer<IIRFilter> tapeLowPass;
+    ScopedPointer<IIRFilter> tapeHighPass;
+    ScopedPointer<IIRFilter> tapeMidBoost;
+    ScopedPointer<MultiDistortion> dist;
+
+    ScopedPointer<LFO> wowLFO;
+    ScopedPointer<LFO> flutterLFO;
+
     ScopedPointer<VariableDelayLine> tape;
+    
+    
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TapeDelayAudioProcessor)

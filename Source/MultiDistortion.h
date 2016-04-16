@@ -4,6 +4,9 @@
     MultiDistortion.h
     Created: 16 Mar 2016 8:45:44pm
     Author:  Alistair Barker
+ 
+    Selectable distortion class, both based on formulas from the DAFx book
+
 
   ==============================================================================
 */
@@ -14,7 +17,8 @@
 enum {
     distTypeTube = 0,
     distTypeSoftClip,
-    distTypeBitCrush
+    distTypeBitCrush,
+    distTypeExpClip
 };
 
 #include "JuceHeader.h"
@@ -29,15 +33,17 @@ public:
     
     float tubeClip(float input);
     float softClip(float input);
-    float bitCrush(float input);
+    float expClip(float input);
     
-    void setGain(float g) {gain = g;}
-    
+    void setDist(float value) {distortion = value;}
+    void setGain(float value) {gain = value;}
+    void setTreshold(float value) {threshold = value;}
+
     
 private:
-    float Q = -0.2;
     float distortion = 8;
-    float gain = 0.75;
+    float gain = 1;
+    float threshold = 0.3;
     
     int distortionType;
     

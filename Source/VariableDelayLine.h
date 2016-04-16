@@ -14,6 +14,7 @@
 #include "JuceHeader.h"
 
 #define DELAY_LINE_SIZE 441000
+#define BUFFER_SIZE 100
 
 class VariableDelayLine
 {
@@ -21,38 +22,44 @@ public:
     VariableDelayLine();
     ~VariableDelayLine() {}
     
-    void writeSamples(AudioSampleBuffer &buffer);
-    void readSamples(int readHeadIndex, AudioSampleBuffer &buffer);
+    void writeSample(float input);
+    float readSample(int readHeadIndex);
     
     void prepareToPlay(int numReadHeads, int* readHeadPositions);
     void reset();
         
-    void setSpeed(float speed) {currentSpeed = speed; DBG("Speed:\t" << currentSpeed);}
-    void setReadPosition(int readHeadIndex, float position);
-    
-    float getDelayTimeMs(int readHeadIndex);
+    void setSpeed(float value) {speed = value; }
+    void setReadPosition(int readHeadIndex, int position);
     
 private:
-    
+    // the delay line buffer
     AudioSampleBuffer delayLine;
     
+    // buffers and pointers used on input and output
+    AudioSampleBuffer inputBufferA;
+    AudioSampleBuffer inputBufferB;
+    int inputBufferPtr = 0;
+    AudioSampleBuffer outputBuffer;
+    int outputBufferPtr;
+    AudioSampleBuffer unusedSamples;
+    int numUnusedSamples;
+
+
+    // tape heads
     ScopedPointer<LagrangeInterpolator> writeHead;
     OwnedArray<LagrangeInterpolator> readHeads;
     
+    // delay line pointrs
     int writePointer;
-    AudioSampleBuffer writeInputBuffer;
-    int writeInputBufferWritePointer = 0;
-    int writeInputBufferReadPointer = 0;
-    
-    AudioSampleBuffer unusedSamples;
-    int numUnusedSamples;
     int* readPointers;
     
+    // actual speed
     float currentSpeed;
-    bool isActive;
     
-    AudioProcessor* processor;
+    // what the speed parameter is set to
+    float speed;
     
+    bool isActive;    
     
 };
 

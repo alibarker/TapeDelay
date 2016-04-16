@@ -12,142 +12,134 @@
 
 VariableDelayLine::VariableDelayLine()
 {
-    
     isActive = false;
     currentSpeed = 1;
-    
 }
 
 void VariableDelayLine::prepareToPlay(int numReadHeads, int *positions)
 {
-    
+    // Initialise buffer
     delayLine.setSize(1, DELAY_LINE_SIZE);
     delayLine.clear();
 
-    unusedSamples.setSize(1, 512);
-    numUnusedSamples = 0;
     
     writePointer = 0;
     
+    // initialise tape heads
     writeHead = new LagrangeInterpolator();
-    writeInputBuffer.setSize( 1, DELAY_LINE_SIZE);
-    writeInputBuffer.clear();
-    
-    readHeads.clear();
+
     readPointers = new int[numReadHeads]();
-    
     for (int i = 0; i < numReadHeads; i++) {
         readHeads.add(new LagrangeInterpolator);
         readPointers[i] = (writePointer - positions[i] + DELAY_LINE_SIZE) % DELAY_LINE_SIZE;
     }
+
+    // initialise other buffers
+    unusedSamples.setSize(1, 10);
+    numUnusedSamples = 0;
     
+    inputBufferA.setSize(1, BUFFER_SIZE);
+    inputBufferB.setSize(1, BUFFER_SIZE);
+    outputBuffer.setSize(1, BUFFER_SIZE);
+
     isActive = true;
 }
 
-void VariableDelayLine::writeSamples(AudioSampleBuffer &buffer)
+void VariableDelayLine::writeSample(float input)
 {
     
     if (isActive)
     {
-        float speed = currentSpeed;
         
-        int numInputSamples = buffer.getNumSamples() + numUnusedSamples; // Number of sample in input buffer
-        int numOutputSamples = floor((numInputSamples-1)/speed); // Number of samples to be produced
-                                                                 // -1 ensures input used < input
+        // copy sample to input buffer & increment
+        inputBufferA.setSample(0, inputBufferPtr, input);
+        inputBufferPtr++;
+       
+        // calculate max number of input samples needed
+        int numInputSamplesNeeded = ceil(currentSpeed);
         
-        // Buffer to to use as input to delay line
-        AudioSampleBuffer bufferToCopyFrom;
-        bufferToCopyFrom.setSize(1, numInputSamples);
-
-        // Check if there were any unused samples and populate input buffer accordingly
-        if (numUnusedSamples > 0) {
-            bufferToCopyFrom.copyFrom(0, 0,
-                                      unusedSamples, 0, 0, numUnusedSamples);
-            bufferToCopyFrom.copyFrom(0, numUnusedSamples, buffer, 0, 0, buffer.getNumSamples());
-            numUnusedSamples = 0;
-        } else
-        {
-            bufferToCopyFrom.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
+        if (currentSpeed < 1) {
+            numInputSamplesNeeded++;
         }
         
-        // Buffer to write output of sample
-        AudioSampleBuffer bufferToWriteTo;
-        bufferToWriteTo.setSize(1, numOutputSamples);
-        
-        // Process buffer and store number of samples unused.
-        int samplesUsed = writeHead->process(speed, bufferToCopyFrom.getReadPointer(0), bufferToWriteTo.getWritePointer(0, 0), numOutputSamples);
-
-        numUnusedSamples = numInputSamples - samplesUsed;
-        
-        // If unused input samples copy them to buffer to reuse on next block
-        if (numUnusedSamples > 0)
-        {
-            unusedSamples.copyFrom(0, 0, bufferToCopyFrom, 0, samplesUsed, numUnusedSamples);
-        }
-        
-        DBG("Unused Samples: \t" << numUnusedSamples);
-        
-        // Copy resampled output to delay line
-        for (int i = 0; i < numOutputSamples; i++)
-        {
-            delayLine.setSample(0, writePointer, bufferToWriteTo.getSample(0, i));
-            writePointer++;
+        // if we have enough input samples for interpolar
+        if (inputBufferPtr >= numInputSamplesNeeded){
             
-            if (writePointer >= DELAY_LINE_SIZE) {
-                writePointer -= DELAY_LINE_SIZE;
+            // process samples
+            int samplesUsed = writeHead->process(currentSpeed, inputBufferA.getReadPointer(0), inputBufferB.getWritePointer(0), ceil(1/currentSpeed));
+
+            // copy unused samples to beginning of buffer
+            for (int i = 0; i < inputBufferPtr - samplesUsed; i++) {
+                inputBufferA.setSample(0, i, inputBufferA.getSample(0, inputBufferPtr - 1 + i));
             }
+            
+            // reset input buffer pointer
+            inputBufferPtr -= samplesUsed;
+            
+            // copy processed samples to delay line
+            for (int i = 0; i < ceil(1/currentSpeed); i++)
+            {
+                delayLine.setSample(0, writePointer, inputBufferB.getSample(0, i));
+                writePointer++;
+                
+                if (writePointer >= DELAY_LINE_SIZE) {
+                    writePointer -= DELAY_LINE_SIZE;
+                }
+            }
+            // update speed only after each time the interpolator runs
+            currentSpeed = speed;
+
+            
         }
     }
     
 }
 
 
-void VariableDelayLine::readSamples(int readHeadIndex, AudioSampleBuffer &buffer)
+float VariableDelayLine::readSample(int readHeadIndex)
 {
     if (isActive)
     {
-        float speed = currentSpeed;
-        
-        int numOutputSamples = buffer.getNumSamples();
-        int maxNumInputSamples = ceil(numOutputSamples/speed);
-        
-        AudioSampleBuffer inputBuffer;
-        inputBuffer.setSize(1, maxNumInputSamples);
-        
-        
-        for (int i = 0; i < maxNumInputSamples; i++)
-        {
-            int pos = (readPointers[readHeadIndex] + i + DELAY_LINE_SIZE) % DELAY_LINE_SIZE;
-            inputBuffer.setSample(0, i, delayLine.getSample(0, pos));
+        // copy max number of samples needed from delayline to buffer
+        int numInputSamples = ceil(1/currentSpeed);
+        for (int i = 0; i < numInputSamples; i++) {
+            int ptr = (readPointers[readHeadIndex] + i + DELAY_LINE_SIZE ) % DELAY_LINE_SIZE;
+            outputBuffer.setSample(0, i, delayLine.getSample(0, ptr));
         }
         
-        int samplesUsed =readHeads[readHeadIndex]->process(1/speed, inputBuffer.getReadPointer(0), buffer.getWritePointer(0), numOutputSamples);
         
-        readPointers[readHeadIndex] += samplesUsed;
+        // process samples
+        float output;
+        int numSamplesUsed = readHeads[readHeadIndex]->process(1/currentSpeed, outputBuffer.getReadPointer(0), &output, 1);
+        
+        // increment read pointer by samples used and wrap if necessary
+        readPointers[readHeadIndex] += numSamplesUsed;
         if (readPointers[readHeadIndex] >= DELAY_LINE_SIZE) {
             readPointers[readHeadIndex] -= DELAY_LINE_SIZE;
         }
+    
+        // output latest sample of delayLine
+        return output;
+        
     }
+    
+    return 0.0;
 }
 
 void VariableDelayLine::reset()
 {
+    // clear deley line
     delayLine.clear();
     
+    // clear interpolators
     writeHead->reset();
-    
-    
     int numReadHeads = readHeads.size();
-    
     for (int i = 0; i < numReadHeads; i++) {
         readHeads[i]->reset();
     }
 }
 
-void setReadPosition(int readHeadIndex, float position)
+void VariableDelayLine::setReadPosition(int readHeadIndex, int position)
 {
-    
-    
+    readPointers[readHeadIndex] = (writePointer - position + DELAY_LINE_SIZE) % DELAY_LINE_SIZE;
 }
-
-float getDelayTimeMs(int readHeadIndex);

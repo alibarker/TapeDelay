@@ -16,15 +16,27 @@
 //==============================================================================
 TapeDelayAudioProcessor::TapeDelayAudioProcessor()
 {
-    // Add parameters in order of enum
-    addParameter(new AudioParameterFloat("0", "Gain", 0, 1, 1));
-    addParameter(new AudioParameterBool("1", "Emphasis On", 1));
-    addParameter(new AudioParameterFloat("2", "Feedback", 0, 1, 0.25));
-    addParameter(new AudioParameterFloat("3", "Speed", 0.01, 10, 1));
+    // Add parameters in order of enum in .h file
+    addParameter(pInputGain = new AudioParameterFloat("in", "Input Gain", -100, +6, 0));
+    addParameter(pOutputGain = new AudioParameterFloat("out", "Output Gain", -100, +6, 0));
+    addParameter(pFeedback = new AudioParameterFloat("fb", "Feedback", -100, 20, -100));
+    addParameter(pSpeed = new AudioParameterFloat("speed", "Speed", 0.25, 4, 1));
+    addParameter(pWowAmount = new AudioParameterFloat("wow", "Wow Gain", 0, 0.2, 0));
+    addParameter(pFlutterAmount = new AudioParameterFloat("flutter", "Flutter Gain", 0, 0.2, 0));
+    addParameter(pLowCutoff = new AudioParameterFloat("hc", "Low Cutoff", 50, 2000, 50));
+    addParameter(pHighCutoff = new AudioParameterFloat("lc", "High Cutoff", 500, 15000, 15000));
+    addParameter(pReadPosition1 = new AudioParameterFloat("readpos1", "Read Position 1", 10, 4000, 700));
+    addParameter(pReadPosition2 = new AudioParameterFloat("readpos2", "Read Position 2", 10, 4000, 900));
+    addParameter(pReadPosition3 = new AudioParameterFloat("readpos3", "Read Position 3", 10, 4000, 1100));
+    addParameter(pReadGain1 = new AudioParameterFloat("readgain1", "Read Head Gain 1", -100, 6, -12));
+    addParameter(pReadGain2 = new AudioParameterFloat("readgain2", "Read Head Gain 2", -100, 6, -12));
+    addParameter(pReadGain3 = new AudioParameterFloat("readgain3", "Read Head Gain 3", -100, 6, -12));
 
-    
-    // Setup Delayline
+    // Setup various objects
     tape = new VariableDelayLine();
+    wowLFO = new LFO;
+    flutterLFO = new LFO;
+    dist = new MultiDistortion;
     
 }
 
@@ -93,27 +105,39 @@ void TapeDelayAudioProcessor::changeProgramName (int index, const String& newNam
 //==============================================================================
 void TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-
-    int numReadHeads = 3;
     
+    // Setup LFOs
+    wowLFO->setRate(0.3, sampleRate);
+    flutterLFO->setRate(10, sampleRate);
+    
+    // set up filters
+    previousLowCutoff = *pLowCutoff;
+    previousHighCutoff = * pHighCutoff;
+    
+    tapeLowPass = new IIRFilter();
+    tapeLowPass->setCoefficients(IIRCoefficients::makeLowPass(sampleRate, previousHighCutoff));
+    
+    tapeMidBoost = new IIRFilter();
+    tapeMidBoost->setCoefficients(IIRCoefficients::makePeakFilter(sampleRate, 500, 0.5, Decibels::decibelsToGain(+6)));
+    
+    tapeHighPass = new IIRFilter();
+    tapeHighPass->setCoefficients(IIRCoefficients::makeHighPass(sampleRate, previousLowCutoff));
     int readPos[numReadHeads];
     
+    // set previous read position states
+    previousReadPos = new float[numReadHeads];
     for (int i = 0; i < numReadHeads; i++) {
-        readPos[i] = sampleRate * (i+1)/4;
     }
-    
+    previousReadPos[0] = readPos[0] = floor(*pReadPosition1 * sampleRate/1000);
+    previousReadPos[1] = readPos[1] = floor(*pReadPosition2 * sampleRate/1000);
+    previousReadPos[2] = readPos[2] = floor(*pReadPosition3 * sampleRate/1000);
+
+    // initialise delay line
     tape->prepareToPlay(3, readPos);
     
-    int numChannels = getTotalNumInputChannels();
-    
-    for (int i = 0; i < numChannels; i++)
-    {
-        highpass.add(new IIRFilter);
-        highpass[i]->setCoefficients(IIRCoefficients::makeHighPass(getSampleRate(), 100));
-    }
-    
+    // set distortion threshold
+    dist->setTreshold(0.2);
+
 }
 
 void TapeDelayAudioProcessor::releaseResources()
@@ -124,54 +148,90 @@ void TapeDelayAudioProcessor::releaseResources()
 
 void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    // update parameters
-    tape->setSpeed(getParameters()[kSpeed]->getValue());
-    float feedback = getParameters()[kFeedback]->getValue();
-    float inputGain = getParameters()[kGain]->getValue();
-
+    
+    float sampleRate = getSampleRate();
     int numSamples = buffer.getNumSamples();
     int numChannels = buffer.getNumChannels();
     
-    AudioSampleBuffer tapeOutput;
-    AudioSampleBuffer tapeInput;
-    
-    tapeOutput.setSize(1, numSamples);
-    tapeInput.setSize(1, numSamples);
-    
-    tapeInput.clear();
-    tapeOutput.clear();
-    
-    
-    // Mono sum
-    for (int channel = 0; channel < numChannels; ++channel)
-    {
-        tapeInput.addFrom(0, 0, buffer, channel, 0, numSamples);
-    }
-        
-        tape->readSamples(0, tapeOutput);
-    
 
-        tapeInput.addFrom(0, 0, tapeOutput, 0, 0, numSamples, feedback);
-    
+    // sample process loop
     for (int n = 0; n < numSamples; n++)
     {
-    
-        dist.setGain(1);
-    
-        float input = tapeInput.getSample(0, n);
-        float output = highpass[0]->processSingleSampleRaw(dist.processSample(input, distTypeTube));
+        float input = 0;
+        float tapeOutput = 0;
+        float tapeInput = 0;
         
-        tapeInput.setSample(0, n, output);
-    }
-    
-    tape->writeSamples(tapeInput);
+        // Mono sum
+        for (int channel = 0; channel < numChannels; ++channel)
+        {
+            input += buffer.getSample(channel, n);
+        }
         
-    buffer.applyGain(inputGain);
-    
-    
-    for (int i = 0; i < numChannels; i++)
-    {
-        buffer.addFrom(i, 0, tapeOutput, 0, 0, numSamples);
+        input /= numChannels;
+        
+        
+        // add instantaneous wow & flutter amounts to speed
+        float speed = *pSpeed * (1 + wowLFO->getNextSample()* *pWowAmount)  * (1 + flutterLFO->getNextSample() * *pFlutterAmount);
+        
+        // Limit speed
+        if (speed < 0.1)
+            speed = 0.1;
+        
+        tape->setSpeed(speed);
+        
+        // set read positions for each read head
+        
+        tape->setReadPosition(0, *pReadPosition1 * sampleRate /1000);
+        previousReadPos[0] = *pReadPosition1;
+        tape->setReadPosition(1, *pReadPosition2 * sampleRate /1000);
+        previousReadPos[1] = *pReadPosition2;
+        tape->setReadPosition(2, *pReadPosition3 * sampleRate /1000);
+        previousReadPos[2] = *pReadPosition3;
+
+        
+        // read sample from each read head
+        tapeOutput += tape->readSample(0) * Decibels::decibelsToGain((float)*pReadGain1);
+        tapeOutput += tape->readSample(1) * Decibels::decibelsToGain((float)*pReadGain2);
+        tapeOutput += tape->readSample(2) * Decibels::decibelsToGain((float)*pReadGain3);
+        
+        
+        // generate input from read samples (with feedback) and input
+        tapeInput = tapeOutput * Decibels::decibelsToGain((float)*pFeedback) + input;
+        
+        tapeInput = dist->processSample(tapeInput, distTypeExpClip);
+        
+        // if the high and low pass filters have changed calculate new coefficients
+        if (*pLowCutoff!= previousLowCutoff)
+        {
+            tapeHighPass->setCoefficients(IIRCoefficients::makeHighPass(sampleRate, *pLowCutoff));
+            previousLowCutoff = *pLowCutoff;
+        }
+        
+        if (*pHighCutoff!= previousHighCutoff)
+        {
+            tapeLowPass->setCoefficients(IIRCoefficients::makeLowPass(sampleRate, *pHighCutoff));
+            previousHighCutoff = *pHighCutoff;
+        }
+        
+        // apply filters to input
+        tapeInput = tapeLowPass->processSingleSampleRaw(tapeInput);
+        tapeInput = tapeHighPass->processSingleSampleRaw(tapeInput);
+        tapeInput = tapeMidBoost->processSingleSampleRaw(tapeInput);
+
+        // hard clip input just in case
+        if (fabs(tapeInput) >= 1) {
+            tapeInput /= fabs(tapeInput);
+        }
+        
+        // write input to delay line
+        tape->writeSample(tapeInput);
+        
+        // apply input to each channel
+        for (int i = 0; i < numChannels; i++)
+        {
+            buffer.setSample(i, n,  input * Decibels::decibelsToGain((float)*pInputGain) + tapeOutput * Decibels::decibelsToGain((float)*pOutputGain));
+        }
+        
     }
 }
 
