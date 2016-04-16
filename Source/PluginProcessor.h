@@ -24,7 +24,6 @@ enum Parameters {
     kOutputGain,
     kFeedback,
     kSpeed,
-    kDistortion,
     kWow,
     kFlutter,
     kLowCutoff,
@@ -79,20 +78,22 @@ public:
     
     // Parameters
 
-    ScopedPointer<AudioParameterFloat> pInputGain;
-    ScopedPointer<AudioParameterFloat> pOutputGain;
-    ScopedPointer<AudioParameterFloat> pFeedback;
-    ScopedPointer<AudioParameterFloat> pSpeed;
-    
-    OwnedArray<AudioParameterFloat> pReadPositions;
-    ScopedPointer<AudioParameterFloat> pReadGain1;
-    ScopedPointer<AudioParameterFloat> pReadGain2;
-    ScopedPointer<AudioParameterFloat> pReadGain3;
-    ScopedPointer<AudioParameterFloat> pDistortion;
-    ScopedPointer<AudioParameterFloat> pFlutterAmount;
-    ScopedPointer<AudioParameterFloat> pWowAmount;
-    ScopedPointer<AudioParameterFloat> pLowCutoff;
-    ScopedPointer<AudioParameterFloat> pHighCutoff;
+    AudioParameterFloat* pInputGain;
+    AudioParameterFloat* pOutputGain;
+    AudioParameterFloat* pFeedback;
+    AudioParameterFloat* pSpeed;
+    AudioParameterFloat* pReadPosition1;
+    AudioParameterFloat* pReadPosition2;
+    AudioParameterFloat* pReadPosition3;
+
+    AudioParameterFloat*  pReadGain1;
+    AudioParameterFloat* pReadGain2;
+    AudioParameterFloat* pReadGain3;
+    AudioParameterFloat* pDistortion;
+    AudioParameterFloat* pFlutterAmount;
+    AudioParameterFloat* pWowAmount;
+    AudioParameterFloat* pLowCutoff;
+    AudioParameterFloat* pHighCutoff;
 
     
 private:
@@ -106,7 +107,6 @@ private:
     ScopedPointer<IIRFilter> tapeLowPass;
     ScopedPointer<IIRFilter> tapeHighPass;
     ScopedPointer<IIRFilter> tapeMidBoost;
-    ScopedPointer<Compressor> tapeSaturator;
     ScopedPointer<MultiDistortion> dist;
 
     ScopedPointer<LFO> wowLFO;

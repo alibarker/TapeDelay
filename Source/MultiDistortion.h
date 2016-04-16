@@ -17,7 +17,8 @@
 enum {
     distTypeTube = 0,
     distTypeSoftClip,
-    distTypeBitCrush
+    distTypeBitCrush,
+    distTypeExpClip
 };
 
 #include "JuceHeader.h"
@@ -32,7 +33,7 @@ public:
     
     float tubeClip(float input);
     float softClip(float input);
-    float bitCrush(float input);
+    float expClip(float input);
     
     void setDist(float value) {distortion = value;}
     void setGain(float value) {gain = value;}

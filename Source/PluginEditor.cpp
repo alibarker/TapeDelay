@@ -30,9 +30,9 @@
 class TapeDelayAudioProcessorEditor::ParameterSlider   : public Slider,
                                                                 private Timer
 {
-    
+
     // A class which can link a parameter to a slider
-    
+
 public:
     ParameterSlider (AudioProcessorParameter& p)
     : Slider (p.getName (256)), param (p)
@@ -151,17 +151,6 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     label5->setColour (TextEditor::textColourId, Colours::black);
     label5->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (sliderDistortion = new ParameterSlider (*processor.getParameters()[kDistortion]));
-    sliderDistortion->setName ("Feedback");
-
-    addAndMakeVisible (label7 = new Label ("new label",
-                                           TRANS("Distortion")));
-    label7->setFont (Font (15.00f, Font::plain));
-    label7->setJustificationType (Justification::centredLeft);
-    label7->setEditable (false, false, false);
-    label7->setColour (TextEditor::textColourId, Colours::black);
-    label7->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
     addAndMakeVisible (sliderFlutter = new ParameterSlider (*processor.getParameters()[kFlutter]));
     sliderFlutter->setName ("Feedback");
 
@@ -232,7 +221,7 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
 
 
     //[UserPreSize]
-    
+
     // Custom code to set slider styles
 
     sliderInputGain->setSliderStyle(juce::Slider::LinearVertical);
@@ -246,9 +235,6 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
     sliderFeedback->setSliderStyle(juce::Slider::Rotary );
     sliderFeedback->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 24);
     sliderFeedback->setSkewFactor(4);
-
-    sliderDistortion->setSliderStyle(juce::Slider::Rotary);
-    sliderDistortion->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 55, 24);
 
     sliderReadGain1->setSkewFactor(4);
     sliderReadGain1->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 55, 24);
@@ -319,8 +305,6 @@ TapeDelayAudioProcessorEditor::~TapeDelayAudioProcessorEditor()
     label4 = nullptr;
     sliderFeedback = nullptr;
     label5 = nullptr;
-    sliderDistortion = nullptr;
-    label7 = nullptr;
     sliderFlutter = nullptr;
     label9 = nullptr;
     sliderWow = nullptr;
@@ -372,15 +356,13 @@ void TapeDelayAudioProcessorEditor::resized()
     label4->setBounds (18, 7, 72, 24);
     sliderFeedback->setBounds (29, 309, 56, 88);
     label5->setBounds (24, 290, 72, 24);
-    sliderDistortion->setBounds (402, 310, 56, 88);
-    label7->setBounds (394, 290, 72, 24);
     sliderFlutter->setBounds (250, 104, 112, 56);
     label9->setBounds (202, 120, 72, 24);
     sliderWow->setBounds (250, 32, 112, 56);
     label10->setBounds (210, 48, 72, 24);
-    sliderLowCutoff->setBounds (168, 312, 208, 32);
+    sliderLowCutoff->setBounds (168, 312, 296, 32);
     label6->setBounds (108, 314, 72, 24);
-    sliderHighCutoff->setBounds (168, 344, 208, 32);
+    sliderHighCutoff->setBounds (168, 344, 296, 32);
     label8->setBounds (103, 347, 72, 24);
     labelReadHead1->setBounds (201, 194, 70, 24);
     labelReadHead2->setBounds (201, 225, 70, 24);
@@ -397,11 +379,11 @@ void TapeDelayAudioProcessorEditor::timerCallback()
 {
     // This function generates the total delay time of each read head
     // and displays it on the GUI
-    
+
     float speed = *parentProcessor->pSpeed;
-    juce::String  time1 = String(*parentProcessor->pReadPositions[0] * speed, 1);
-    juce::String  time2 = String(*parentProcessor->pReadPositions[1] * speed, 1);
-    juce::String  time3 = String(*parentProcessor->pReadPositions[2] * speed, 1);
+    juce::String  time1 = String(*parentProcessor->pReadPosition1 * speed, 1);
+    juce::String  time2 = String(*parentProcessor->pReadPosition2 * speed, 1);
+    juce::String  time3 = String(*parentProcessor->pReadPosition3 * speed, 1);
 
     time1+= " ms";
     time2+= " ms";
@@ -487,14 +469,6 @@ BEGIN_JUCER_METADATA
          edBkgCol="0" labelText="Feedback" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
-  <GENERICCOMPONENT name="Feedback" id="e780d7eca0ed303e" memberName="sliderDistortion"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="402 310 56 88"
-                    class="Component" params="*processor.getParameters()[kDistortion]"/>
-  <LABEL name="new label" id="5d964e24bc68ede2" memberName="label7" virtualName=""
-         explicitFocusOrder="0" pos="394 290 72 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Distortion" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="Feedback" id="451bd2dca0632d03" memberName="sliderFlutter"
                     virtualName="ParameterSlider" explicitFocusOrder="0" pos="250 104 112 56"
                     class="Component" params="*processor.getParameters()[kFlutter]"/>
@@ -512,7 +486,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="Low Cutoff" id="aeb356e4b9375930" memberName="sliderLowCutoff"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="168 312 208 32"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="168 312 296 32"
                     class="Component" params="*processor.getParameters()[kLowCutoff]"/>
   <LABEL name="new label" id="b1733136ed04b0b9" memberName="label6" virtualName=""
          explicitFocusOrder="0" pos="108 314 72 24" edTextCol="ff000000"
@@ -520,7 +494,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="High TCutoff" id="ea63aed4b1aba84a" memberName="sliderHighCutoff"
-                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="168 344 208 32"
+                    virtualName="ParameterSlider" explicitFocusOrder="0" pos="168 344 296 32"
                     class="Component" params="*processor.getParameters()[kHighCutoff]"/>
   <LABEL name="new label" id="c5e5e3a4190177b" memberName="label8" virtualName=""
          explicitFocusOrder="0" pos="103 347 72 24" edTextCol="ff000000"

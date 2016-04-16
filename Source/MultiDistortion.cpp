@@ -22,6 +22,8 @@ float MultiDistortion::processSample(float input, int type)
         case distTypeSoftClip:
             return softClip(input);
             break;
+        case distTypeExpClip:
+            return expClip(input);
             
         default:
             return input;
@@ -88,5 +90,13 @@ float MultiDistortion::softClip(float input)
     }
     
     return output;
+}
+
+float MultiDistortion::expClip(float input)
+{
+    
+    input *= gain;
+    return fabs(input)/input * (1 - exp(-fabs(input)));
+    
 }
 
