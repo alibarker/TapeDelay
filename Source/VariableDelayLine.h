@@ -13,8 +13,7 @@
 
 #include "JuceHeader.h"
 
-#define DELAY_LINE_SIZE 441000
-#define BUFFER_SIZE 100
+#define DELAY_LINE_SIZE 22050
 
 class VariableDelayLine
 {
@@ -23,43 +22,27 @@ public:
     ~VariableDelayLine() {}
     
     void writeSample(float input);
-    float readSample(int readHeadIndex);
-    
-    void prepareToPlay(int numReadHeads, int* readHeadPositions);
+    float readSample();
+
+    void prepareToPlay();
     void reset();
         
     void setSpeed(float value) {speed = value; }
-    void setReadPosition(int readHeadIndex, int position);
-    
+    void setTimeMs(float value, float sampleRate);
 private:
+    
+    float interpolate(float fract, float in1, float in2);
+
     // the delay line buffer
     AudioSampleBuffer delayLine;
-    
-    // buffers and pointers used on input and output
-    AudioSampleBuffer inputBufferA;
-    AudioSampleBuffer inputBufferB;
-    int inputBufferPtr = 0;
-    AudioSampleBuffer outputBuffer;
-    int outputBufferPtr;
-    AudioSampleBuffer unusedSamples;
-    int numUnusedSamples;
 
-
-    // tape heads
-    ScopedPointer<LagrangeInterpolator> writeHead;
-    OwnedArray<LagrangeInterpolator> readHeads;
-    
     // delay line pointrs
-    int writePointer;
-    int* readPointers;
+    float phase;
+    int last_phase;
     
-    // actual speed
-    float currentSpeed;
-    
-    // what the speed parameter is set to
+    // state variables
     float speed;
-    
-    bool isActive;    
+    bool isActive;
     
 };
 

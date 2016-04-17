@@ -250,7 +250,7 @@ TapeDelayAudioProcessorEditor::TapeDelayAudioProcessorEditor (TapeDelayAudioProc
 
     sliderSpeed->setSliderStyle(juce::Slider::Rotary);
     sliderSpeed->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 40, 24);
-    sliderSpeed->setSkewFactorFromMidPoint(1/3.75);
+    sliderSpeed->setSkewFactorFromMidPoint(0.2);
 
     sliderReadPosition1->setSkewFactor(0.5);
     sliderReadPosition1->setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);

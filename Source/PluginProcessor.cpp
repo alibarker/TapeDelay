@@ -20,7 +20,7 @@ TapeDelayAudioProcessor::TapeDelayAudioProcessor()
     addParameter(pInputGain = new AudioParameterFloat("in", "Input Gain", -100, +6, 0));
     addParameter(pOutputGain = new AudioParameterFloat("out", "Output Gain", -100, +6, 0));
     addParameter(pFeedback = new AudioParameterFloat("fb", "Feedback", -100, 20, -100));
-    addParameter(pSpeed = new AudioParameterFloat("speed", "Speed", 0.25, 4, 1));
+    addParameter(pSpeed = new AudioParameterFloat("delay time", "Time (Ms)", 1, 2000, 500));
     addParameter(pWowAmount = new AudioParameterFloat("wow", "Wow Gain", 0, 0.2, 0));
     addParameter(pFlutterAmount = new AudioParameterFloat("flutter", "Flutter Gain", 0, 0.2, 0));
     addParameter(pLowCutoff = new AudioParameterFloat("hc", "Low Cutoff", 50, 2000, 50));
@@ -133,7 +133,7 @@ void TapeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     previousReadPos[2] = readPos[2] = floor(*pReadPosition3 * sampleRate/1000);
 
     // initialise delay line
-    tape->prepareToPlay(3, readPos);
+    tape->prepareToPlay();
     
     // set distortion threshold
     dist->setTreshold(0.2);
@@ -171,29 +171,17 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
         
         
         // add instantaneous wow & flutter amounts to speed
-        float speed = *pSpeed * (1 + wowLFO->getNextSample()* *pWowAmount)  * (1 + flutterLFO->getNextSample() * *pFlutterAmount);
+        float time = *pSpeed * (1 + wowLFO->getNextSample()* *pWowAmount)  * (1 + flutterLFO->getNextSample() * *pFlutterAmount);
         
         // Limit speed
-        if (speed < 0.1)
-            speed = 0.1;
+        time = time <= 1/sampleRate ? 1/sampleRate : time;
         
-        tape->setSpeed(speed);
+        tape->setTimeMs(time, sampleRate);
         
-        // set read positions for each read head
-        
-        tape->setReadPosition(0, *pReadPosition1 * sampleRate /1000);
-        previousReadPos[0] = *pReadPosition1;
-        tape->setReadPosition(1, *pReadPosition2 * sampleRate /1000);
-        previousReadPos[1] = *pReadPosition2;
-        tape->setReadPosition(2, *pReadPosition3 * sampleRate /1000);
-        previousReadPos[2] = *pReadPosition3;
-
         
         // read sample from each read head
-        tapeOutput += tape->readSample(0) * Decibels::decibelsToGain((float)*pReadGain1);
-        tapeOutput += tape->readSample(1) * Decibels::decibelsToGain((float)*pReadGain2);
-        tapeOutput += tape->readSample(2) * Decibels::decibelsToGain((float)*pReadGain3);
-        
+
+        tapeOutput = tape->readSample();
         
         // generate input from read samples (with feedback) and input
         tapeInput = tapeOutput * Decibels::decibelsToGain((float)*pFeedback) + input;
@@ -224,6 +212,7 @@ void TapeDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
         }
         
         // write input to delay line
+//        tape->writeSample(tapeInput);
         tape->writeSample(tapeInput);
         
         // apply input to each channel
