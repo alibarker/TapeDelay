@@ -36,27 +36,43 @@ void VariableDelayLine::writeSample(float input)
     
     if (isActive)
     {
-        
-        int fph = (int)floor(phase) % DELAY_LINE_SIZE;
-        int ph = (last_phase + 1) % DELAY_LINE_SIZE;
-        
-        float lin_inc = 1.0f / (floor(phase) - (last_phase + 1)% DELAY_LINE_SIZE);
+             float lin_inc = 1.0f / (floor(phase) - lastPhase + 1);
         lin_inc = lin_inc > 1.0f ? 1.0f : lin_inc;
-        float lin_int = 0.0f;
-        
-        while (ph <= fph) {
+         float lin_int = 0.0f;
+        for (int track = lastPhase; track < phase; track++) {
             lin_int += lin_inc;
-            float in = interpolate(lin_int, delayLine.getSample(0, last_phase), input);
-            delayLine.setSample(0, ph, in);
-            ph = ph + 1;
+            float in = interpolate(lin_int, lastIn, input);
+            delayLine.setSample(0, track % DELAY_LINE_SIZE, in);
         }
-        last_phase = fph;
-        phase += speed;
-
+        lastIn = input;
+        
+        ;
         if (phase >= DELAY_LINE_SIZE) {
             phase -= DELAY_LINE_SIZE;
         }
         
+//        int fph = (int)floor(phase) % DELAY_LINE_SIZE;
+//        int ph = (lastPhase + 1) % DELAY_LINE_SIZE;
+//        
+//        float lin_inc = 1.0f / (floor(phase) - lastPhase + 1);
+//        lin_inc = lin_inc > 1.0f ? 1.0f : lin_inc;
+//        float lin_int = 0.0f;
+//        
+//        while (ph <= fph) {
+//            lin_int += lin_inc;
+//            float in = interpolate(lin_int, delayLine.getSample(0, lastPhase), input);
+//            delayLine.setSample(0, ph, in);
+//            ph = (ph + 1);
+//        }
+//        
+//        lastIn = input;
+//        lastPhase = fph;
+//        phase += speed;
+//
+//        if (phase >= DELAY_LINE_SIZE) {
+//            phase -= DELAY_LINE_SIZE;
+//        }
+//        
     
     }
 
@@ -66,10 +82,13 @@ float VariableDelayLine::readSample()
 {
     if (isActive) {
 
-        int fph = (int)floor(phase) % DELAY_LINE_SIZE;
-        float fract = phase - (float)fph;
-        float out = interpolate(fract, delayLine.getSample(0, fph % DELAY_LINE_SIZE),
-                                     delayLine.getSample(0, (fph+1) % DELAY_LINE_SIZE));
+        int fph = round(floor(phase));
+        lastPhase = fph;
+        float lin_int = phase - (float)fph;
+        float out = interpolate(lin_int, delayLine.getSample(0, (fph+1) % DELAY_LINE_SIZE),
+                                delayLine.getSample(0, (fph+2) % DELAY_LINE_SIZE));
+        
+        phase += speed;
         return out;
     }
     return 0.0;

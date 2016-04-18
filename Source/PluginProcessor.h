@@ -102,6 +102,8 @@ private:
     
     float previousLowCutoff, previousHighCutoff;
     float* previousReadPos;
+    
+    float lastDelayOut;
 
     // Sub Components
     ScopedPointer<IIRFilter> tapeLowPass;

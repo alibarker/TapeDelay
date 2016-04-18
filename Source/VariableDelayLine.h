@@ -38,7 +38,8 @@ private:
 
     // delay line pointrs
     float phase;
-    int last_phase;
+    int lastPhase;
+    float lastIn;
     
     // state variables
     float speed;
